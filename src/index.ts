@@ -33,7 +33,7 @@ import { getBaseName } from './utils.ts';
 	const validFlags = ['--help', '--sort'];
 
 	for (const raw of rawArgs) {
-		const [flagName, flagValue] = raw.split('=');
+		const [flagName] = raw.split('=');
 
 		if (!flagName.startsWith('--')) continue;
 
@@ -121,9 +121,9 @@ import { getBaseName } from './utils.ts';
 	}
 
 	let pageStart = 1;
-	let data: SearchResult[] = [];
 	let consecutiveFails = 0;
 	let isLoading = false;
+	const data: SearchResult[] = [];
 
 	const grandInfo = gSire.value !== 'skip' ? ` [${chalk.yellowBright(gSire.name)}${gDam?.value !== 'skip' ? ` x ${chalk.yellowBright(gDam?.name)}` : ''}]` : '';
 

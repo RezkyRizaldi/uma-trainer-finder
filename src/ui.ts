@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import inquirer from 'inquirer';
+import inquirer, { type QuestionCollection } from 'inquirer';
 import { getBorderCharacters, table } from 'table';
 
 import type { OptionWithSpecial, SearchResult } from './types.ts';
@@ -72,7 +72,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		persistentRenderer?.();
 
 		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released');
-		let list: OptionWithSpecial<T>[] = withToggle
+		const list: OptionWithSpecial<T>[] = withToggle
 			? [
 					...baseOpts,
 					{
@@ -93,16 +93,20 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex].value : undefined;
 
 		try {
-			const { chosen } = await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>({
-				type: 'list',
-				name: 'chosen',
-				message: chalk.bold(msg + (withToggle ? ' (↑/↓ lalu Enter)' : '')),
-				choices: inquirerChoices,
-				loop: false,
-				pageSize: 20,
-				default: defaultValue,
-				prefix: '',
-			} as any);
+			const questions: QuestionCollection<{ chosen: OptionWithSpecial<T> }> = [
+				{
+					type: 'list',
+					name: 'chosen',
+					message: chalk.bold(msg + (withToggle ? ' (↑/↓ lalu Enter)' : '')),
+					choices: inquirerChoices,
+					loop: false,
+					pageSize: 20,
+					default: defaultValue,
+					prefix: '',
+				},
+			];
+
+			const { chosen } = await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>(questions);
 
 			if (chosen.value === '__toggleUpcoming') {
 				showUpcoming = !showUpcoming;
@@ -110,8 +114,11 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 			}
 
 			return chosen;
-		} catch (err: any) {
-			if (err.message?.includes('force closed')) process.exit(0);
+		} catch (err) {
+			if (err instanceof Error && err.message?.includes('force closed')) {
+				process.exit(0);
+			}
+
 			throw err;
 		}
 	}
