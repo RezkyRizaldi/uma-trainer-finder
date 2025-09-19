@@ -1,23 +1,29 @@
-# Uma CLI
+# Uma Trainer Finder
 
-CLI sederhana untuk mencari data inheritance Uma Musume: Pretty Derby.
+CLI sederhana untuk mencari data inheritance pada game **Uma Musume: Pretty Derby**.
 
 ---
 
 ## 🚀 Instalasi & Menjalankan
 
-1. **Pasang dependencies dev**
+1. **Clone**
+   ```bash
+   git clone https://github.com/RezkyRizaldi/uma-trainer-finder.git
+   cd uma-trainer-finder
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
    (sudah ada dependensi `typescript` dan `ts-node` di `package.json`).
 
-2. **Menjalankan langsung dengan ts-node**
+3. **Menjalankan langsung dengan ts-node**
    ```bash
    npm run dev
    ```
 
-3. **Menjalankan dengan flag sorting**
+4. **Menjalankan dengan flag sorting**
    Kamu bisa menggunakan flag `--sort` untuk menentukan metode pengurutan:
    - `rank` → urut berdasarkan parent rank (default)
    - `win` → urut berdasarkan jumlah kemenangan G1
@@ -26,10 +32,10 @@ CLI sederhana untuk mencari data inheritance Uma Musume: Pretty Derby.
 
    Jalankan dengan:
    ```bash
-   npm run dev -- --sort=rank
-   npm run dev -- --sort=win
-   npm run dev -- --sort=sparks
-   npm run dev -- --sort=latest
+   node src/index.ts --sort=rank
+   node src/index.ts --sort=win
+   node src/index.ts --sort=sparks
+   node src/index.ts --sort=latest
    ```
 
    Atau gunakan shortcut script yang sudah tersedia di `package.json`:
@@ -39,8 +45,9 @@ CLI sederhana untuk mencari data inheritance Uma Musume: Pretty Derby.
    npm run dev:sparks
    npm run dev:latest
    ```
+   (Gunakan `--help` atau `-h` untuk memuat halaman bantuan)
 
-4. **Build & Jalankan hasil kompilasi**
+5. **Build & Jalankan hasil kompilasi**
    ```bash
    npm run build
    npm start
