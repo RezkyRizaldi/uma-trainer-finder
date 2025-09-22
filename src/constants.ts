@@ -374,7 +374,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Gold City (Run (my) way)', value: 30014, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Gold City (Tracen Academy)', value: 10017, rarity: 'R', type: 'Speed' },
 	{ name: 'Gold Ship', value: 30168, rarity: 'SSR', type: 'Speed' },
-	{ name: 'Gold Ship', value: 30057, rarity: 'SSR', type: 'Speed' },
+	{ name: 'Gold Ship (That Tune I Became the Strongesr)', value: 30057, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Gold Ship', value: 20061, rarity: 'SR', type: 'Stamina' },
 	{ name: 'Gold Ship (Breakaway Battleship)', value: 30004, rarity: 'SSR', type: 'Stamina' },
 	{ name: 'Gold Ship (Tracen Academy)', value: 10006, rarity: 'R', type: 'Stamina' },

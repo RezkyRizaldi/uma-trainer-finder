@@ -33,10 +33,10 @@
   ],
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@types/chalk": "^0.4.31",
+    "@types/chalk": "^2.2.4",
     "@types/inquirer": "^9.0.9",
-    "@types/node": "^24.3.1",
-    "@types/table": "^6.0.0",
+    "@types/node": "^24.5.2",
+    "@types/table": "^6.3.2",
     "@types/yargs": "^17.0.33",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
@@ -44,7 +44,7 @@
     "globals": "^16.4.0",
     "jiti": "^2.5.1",
     "prettier": "^3.6.2",
-    "ts-node": "^10.0.0",
+    "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.0"
