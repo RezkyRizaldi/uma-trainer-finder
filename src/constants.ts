@@ -78,7 +78,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Haru Urara (First Urara ♪ Saku Sakura)', value: 105202, status: 'upcoming' },
 	{ name: 'Haru Urara (Bestest Prize ♪)', value: 105201, status: 'released' },
 	{ name: 'Hishi Akebono (Bono ☆ Alla Moda)', value: 102801, status: 'upcoming' },
-	{ name: 'Hishi Akebono Magic Night Garland)', value: 102802, status: 'upcoming' },
+	{ name: 'Hishi Akebono (Magic Night Garland)', value: 102802, status: 'upcoming' },
 	{ name: 'Hishi Amazon (Azure Amazon)', value: 101201, status: 'released' },
 	{ name: 'Hishi Amazon (Hungry Veil)', value: 101202, status: 'upcoming' },
 	{ name: 'Hishi Miracle ([ハッピー・リトル・ノーツ])', value: 110602, status: 'upcoming' },
