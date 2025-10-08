@@ -1,6 +1,6 @@
 # Uma Trainer Finder
 
-CLI sederhana untuk mencari data inheritance pada game **Uma Musume: Pretty Derby**.
+CLI sederhana untuk mencari data inheritance pada game **Umamusume: Pretty Derby**.
 
 ---
 
