@@ -525,7 +525,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Narita Brian', value: 30224, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Narita Brian', value: 30123, rarity: 'SSR', type: 'Guts' },
 	{ name: 'Narita Brian', value: 30069, rarity: 'SSR', type: 'Stamina' },
-	{ name: 'Narita Brian', value: 30044, rarity: 'SSR', type: 'Speed' },
+	{ name: 'Narita Brian (Two Pieces)', value: 30044, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Narita Brian', value: 10072, rarity: 'R', type: 'Speed' },
 	{ name: 'Narita Taishin', value: 30201, rarity: 'SSR', type: 'Wit' },
 	{ name: 'Narita Taishin', value: 30073, rarity: 'SSR', type: 'Wit' },
