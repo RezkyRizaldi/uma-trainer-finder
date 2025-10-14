@@ -1,5 +1,5 @@
 import chalk from 'chalk';
-import inquirer, { type QuestionCollection } from 'inquirer';
+import inquirer from 'inquirer';
 import { getBorderCharacters, table } from 'table';
 
 import type { OptionWithSpecial, SearchResult } from './types.ts';
@@ -38,10 +38,10 @@ export const printTable = (data: SearchResult[]) => {
 		border: getBorderCharacters('honeywell'),
 		columns: maxW.map((w) => ({
 			alignment: 'center',
+			verticalAlignment: 'middle',
 			width: Math.max(8, Math.floor(w * Math.min(1, termWidth / totalDefault))),
 			wrapWord: true,
 		})),
-		drawHorizontalLine: (lineIndex, rowCount) => lineIndex === 0 || lineIndex === 1 || lineIndex === rowCount,
 	});
 
 	console.log(`\n${output}`);
@@ -71,13 +71,14 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		if (clearScreen) process.stdout.write('\x1bc');
 		persistentRenderer?.();
 
-		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released');
+		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === 'option');
 		const list: OptionWithSpecial<T>[] = withToggle
 			? [
 					...baseOpts,
 					{
 						name: showUpcoming ? '🚫 Sembunyikan karakter yang akan datang' : '👁️ Tampilkan karakter yang akan datang',
 						value: '__toggleUpcoming',
+						status: 'option',
 					},
 			  ]
 			: baseOpts;
@@ -93,20 +94,17 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex].value : undefined;
 
 		try {
-			const questions: QuestionCollection<{ chosen: OptionWithSpecial<T> }> = [
+			const { chosen } = (await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>([
 				{
 					type: 'list',
 					name: 'chosen',
-					message: chalk.bold(msg + (withToggle ? ' (↑/↓ lalu Enter)' : '')),
+					message: chalk.bold(msg + (withToggle ? ` (${chalk.greenBright('↑')}/${chalk.greenBright('↓')} lalu ${chalk.greenBright('Enter')})` : '')),
 					choices: inquirerChoices,
 					loop: false,
 					pageSize: 20,
 					default: defaultValue,
-					prefix: '',
 				},
-			];
-
-			const { chosen } = await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>(questions);
+			])) as { chosen: OptionWithSpecial<T> };
 
 			if (chosen.value === '__toggleUpcoming') {
 				showUpcoming = !showUpcoming;

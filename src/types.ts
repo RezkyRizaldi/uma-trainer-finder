@@ -118,7 +118,7 @@ export interface Option<T> {
 	value: T;
 
 	/** Status ketersediaan dari data (opsional). */
-	status?: 'released' | 'upcoming' | 'unreleased';
+	status?: 'released' | 'upcoming' | 'unreleased' | 'option';
 }
 
 /** Struktur pilihan biasa + pilihan khusus untuk menu navigasi. */

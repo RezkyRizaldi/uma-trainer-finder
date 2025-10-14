@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants.ts';
 import type { Option, SupportCard, SupportData } from './types.ts';
 
@@ -21,7 +23,31 @@ export const formatSupportCard = (data?: SupportData) => {
 	if (!data) return '-';
 	const c = supportCardMap[data.support_card_id];
 	if (!c) return `${data.support_card_id}`;
-	return `${c.name} [${c.type}] (${c.rarity}${data.limit_break_count > 0 ? ` ${'★'.repeat(data.limit_break_count)}` : ''})`;
+
+	let formattedType;
+	switch (c.type) {
+		case 'Speed':
+			formattedType = chalk.blueBright(c.type);
+			break;
+		case 'Stamina':
+			formattedType = chalk.redBright(c.type);
+			break;
+		case 'Power':
+		case 'Friend':
+			formattedType = chalk.hex('#DB8500')(c.type);
+			break;
+		case 'Guts':
+			formattedType = chalk.hex('#DB698E')(c.type);
+			break;
+		case 'Wit':
+			formattedType = chalk.green(c.type);
+			break;
+		default:
+			formattedType = chalk.greenBright(c.type);
+			break;
+	}
+
+	return `${c.name} [${formattedType}] (${c.rarity}${data.limit_break_count > 0 ? ` ${chalk.yellow('★'.repeat(data.limit_break_count))}` : ''})`;
 };
 
 /**
@@ -49,7 +75,7 @@ export const formatSpark = (sparks: number[]) => {
 		arr.flatMap(({ name, value }) => {
 			const maxStars = value.toString().length === 8 ? 3 : 9;
 			return Array.from({ length: maxStars }, (_, i) => ({
-				name: `${i + 1}★ ${name}`,
+				name: `${i + 1}${chalk.yellow('★')} ${name}`,
 				value: value + i,
 			}));
 		});

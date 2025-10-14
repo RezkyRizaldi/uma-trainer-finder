@@ -81,7 +81,7 @@ import { getBaseName } from './utils.ts';
 	while (true) {
 		const excludeBases = [getBaseName(sire.name)];
 		gSire = await chooseOption(
-			[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip' }, { name: '🔙 Kembali', value: null }],
+			[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 			`Pilih Grandsire untuk ${chalk.yellowBright(sire.name)}`
 		);
 
@@ -97,7 +97,7 @@ import { getBaseName } from './utils.ts';
 		while (true) {
 			const excludeBases = [getBaseName(sire.name), getBaseName(gSire.name)];
 			gDam = await chooseOption(
-				[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip' }, { name: '🔙 Kembali', value: null }],
+				[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 				`Pilih Granddam untuk ${chalk.yellowBright(sire.name)} x ${chalk.yellowBright(gSire.name)}`
 			);
 
@@ -105,7 +105,7 @@ import { getBaseName } from './utils.ts';
 				while (true) {
 					const excludeBases2 = [getBaseName(sire.name)];
 					gSire = await chooseOption(
-						[...traineeOptions.filter((h) => !excludeBases2.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip' }, { name: '🔙 Kembali', value: null }],
+						[...traineeOptions.filter((h) => !excludeBases2.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 						`Pilih Grandsire untuk ${chalk.yellowBright(sire.name)}`
 					);
 					if (gSire.value === null) {
@@ -168,8 +168,8 @@ import { getBaseName } from './utils.ts';
 
 		const nextAction = await chooseOption(
 			[
-				{ name: '➡️ Lanjut', value: 'next' },
-				{ name: '🛑 Berhenti', value: 'stop' },
+				{ name: '➡️ Lanjut', value: 'next', status: 'option' },
+				{ name: '🛑 Berhenti', value: 'stop', status: 'option' },
 			],
 			'\nCari di Halaman Berikutnya',
 			true,
