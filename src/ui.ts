@@ -91,7 +91,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		}));
 
 		const firstSelectableIndex = inquirerChoices.findIndex((c) => !c.disabled);
-		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex].value : undefined;
+		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex]?.value : undefined;
 
 		try {
 			const { chosen } = (await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>([

@@ -45,7 +45,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Daitaku Helios (Joyful Jamboree!)', value: 106502, status: 'upcoming' },
 	{ name: 'Daiwa Scarlet (Scarlet Nuit Étoilée)', value: 100902, status: 'upcoming' },
 	{ name: 'Daiwa Scarlet (Peak Blue)', value: 100901, status: 'released' },
-	{ name: 'Dantsu Flame', value: 100000, status: 'unreleased' },
+	{ name: 'Dantsu Flame (まんなか◎スポットライト)', value: 109201, status: 'upcoming' },
 	{ name: 'Daring Heart', value: 100000, status: 'unreleased' },
 	{ name: 'Daring Tact', value: 100000, status: 'unreleased' },
 	{ name: 'Dream Journey (Dreamland Memento)', value: 111901, status: 'upcoming' },
@@ -334,7 +334,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Daiwa Scarlet (Tracen Academy)', value: 10023, rarity: 'R', type: 'Wit' },
 	{ name: 'Dantsu Flame', value: 30269, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Dantsu Flame', value: 30209, rarity: 'SSR', type: 'Stamina' },
-	{ name: 'Dantsu Flame', value: 20077, rarity: 'SR', type: 'Wit' },-
+	{ name: 'Dantsu Flame', value: 20077, rarity: 'SR', type: 'Wit' },
 	{ name: 'Dantsu Flame', value: 10108, rarity: 'R', type: 'Wit' },
 	{ name: 'Daring Heart', value: 30254, rarity: 'SSR', type: 'Wit' },
 	{ name: 'Daring Heart', value: 20087, rarity: 'SR', type: 'Guts' },

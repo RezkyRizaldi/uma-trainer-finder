@@ -35,9 +35,9 @@ import { getBaseName } from './utils.ts';
 	for (const raw of rawArgs) {
 		const [flagName] = raw.split('=');
 
-		if (!flagName.startsWith('--')) continue;
+		if (flagName && !flagName.startsWith('--')) continue;
 
-		if (!validFlags.includes(flagName)) {
+		if (flagName && !validFlags.includes(flagName)) {
 			let suggestion = `\n💡 Gunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`;
 			for (const vFlag of validFlags) {
 				if (distance(flagName, vFlag) <= 2) {
