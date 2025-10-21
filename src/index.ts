@@ -1,13 +1,16 @@
+#!/usr/bin/env node
+
 import chalk from 'chalk';
 import { distance } from 'fastest-levenshtein';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
-import { fetchAllPages } from './api.ts';
-import { traineeOptions } from './constants.ts';
-import type { OptionWithSpecial, SearchResult, SearchSortingQuery } from './types.ts';
-import { chooseOption, printTable } from './ui.ts';
-import { getBaseName } from './utils.ts';
+import { fetchAllPages } from './api';
+import { traineeOptions } from './constants';
+import type { OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
+import { chooseOption, printTable } from './ui';
+import { getBaseName } from './utils';
+import pkg from '../package.json'
 
 /**
  * Main loop program.
@@ -30,7 +33,7 @@ import { getBaseName } from './utils.ts';
 	let sortBy: SearchSortingQuery = 'parent_rank';
 
 	const rawArgs = process.argv.slice(2);
-	const validFlags = ['--help', '--sort'];
+	const validFlags = ['--help', '--sort', '--version'];
 
 	for (const raw of rawArgs) {
 		const [flagName] = raw.split('=');
@@ -51,15 +54,17 @@ import { getBaseName } from './utils.ts';
 	}
 
 	const argv = yargs(hideBin(process.argv))
-		.usage('Usage: node src/index.ts [options]')
+		.usage('Usage: uma-cli [options]')
 		.option('sort', {
 			type: 'string',
 			describe: 'Atur metode pengurutan hasil',
 			choices: Object.keys(mapping),
 		})
+		.version(pkg.version)
+		.alias('version', 'v')
 		.help('help')
 		.alias('help', 'h')
-		.parseSync() as { sort?: string };
+		.parseSync() as { sort?: string; version?: boolean };
 
 	if (argv.sort) {
 		const val = argv.sort;

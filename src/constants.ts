@@ -1,4 +1,4 @@
-import type { Option, SupportCard } from './types.ts';
+import type { Option, SupportCard } from './types';
 
 /** Data trainee (horse) yang bisa dipilih user. */
 export const traineeOptions: Option<number>[] = [

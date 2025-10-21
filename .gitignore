@@ -136,3 +136,5 @@ dist
 
 # Vite logs files
 vite.config.js.timestamp-*
+
+dist

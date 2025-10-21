@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import inquirer from 'inquirer';
 import { getBorderCharacters, table } from 'table';
 
-import type { OptionWithSpecial, SearchResult } from './types.ts';
-import { formatSpark, formatSupportCard, traineeMap } from './utils.ts';
+import type { OptionWithSpecial, SearchResult } from './types';
+import { formatSpark, formatSupportCard, traineeMap } from './utils';
 
 /**
  * Mencetak hasil pencarian dalam bentuk tabel ke console.

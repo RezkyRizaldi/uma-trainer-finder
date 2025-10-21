@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
-import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants.ts';
-import type { Option, SupportCard, SupportData } from './types.ts';
+import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants';
+import type { Option, SupportCard, SupportData } from './types';
 
 /** Pemetaan data trainee (horse). */
 export const traineeMap: Record<number, string> = Object.fromEntries(traineeOptions.map(({ value, name }) => [value, name]));

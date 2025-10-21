@@ -1,4 +1,4 @@
-import type { ApiResponse, SearchResult, SearchSortingQuery } from './types.ts';
+import type { ApiResponse, SearchResult, SearchSortingQuery } from './types';
 
 /**
  * Fetch data dari API (inheritance search, banyak halaman).
@@ -14,7 +14,7 @@ export const fetchAllPages = async (sire: number, gSire: number | null = null, g
 	try {
 		return (
 			await Promise.all(
-				Array.from({ length: 50 }).map((_, i) =>
+				Array.from({ length: 10 }).map((_, i) =>
 					fetch(`https://uma.moe/api/v3/search?page=${startPage + i}&limit=12&search_type=inheritance&main_parent_id=${sire}&sort_by=${sortBy}&sort_order=desc&max_follower_num=1000`).then((r) =>
 						(r.ok ? (r.json() as Promise<ApiResponse>) : Promise.resolve({ items: [], total: 0, page: 0, limit: 0, total_pages: 0 } as ApiResponse)).catch(() => ({ items: [], total: 0, page: 0, limit: 0, total_pages: 0 } as ApiResponse))
 					)
