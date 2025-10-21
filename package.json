@@ -34,7 +34,7 @@
   "devDependencies": {
     "@eslint/js": "^9.38.0",
     "@types/inquirer": "^9.0.9",
-    "@types/node": "^24.8.1",
+    "@types/node": "^24.9.1",
     "@types/yargs": "^17.0.33",
     "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
@@ -45,7 +45,7 @@
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.1"
+    "typescript-eslint": "^8.46.2"
   },
   "dependencies": {
     "chalk": "^5.6.2",
