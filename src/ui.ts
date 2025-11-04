@@ -80,7 +80,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 						value: '__toggleUpcoming',
 						status: 'option',
 					},
-			  ]
+				]
 			: baseOpts;
 
 		const inquirerChoices = list.map((o) => ({

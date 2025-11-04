@@ -10,7 +10,7 @@ import { traineeOptions } from './constants';
 import type { OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
 import { chooseOption, printTable } from './ui';
 import { getBaseName } from './utils';
-import pkg from '../package.json'
+import pkg from '../package.json';
 
 /**
  * Main loop program.
