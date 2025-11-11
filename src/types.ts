@@ -128,7 +128,7 @@ export type OptionWithSpecial<T> = Option<T | SpecialValue>;
 export type SupportCardRarity = 'SSR' | 'SR' | 'R';
 
 /** Tipe kartu support. */
-export type SupportCardType = 'Speed' | 'Stamina' | 'Power' | 'Guts' | 'Wit' | 'Friend' | 'Group';
+export type SupportCardType = 'Speed' | 'Stamina' | 'Power' | 'Guts' | 'Wit' | 'Pal' | 'Group';
 
 /** Representasi kartu support. */
 export interface SupportCard {
