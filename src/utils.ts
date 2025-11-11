@@ -33,7 +33,7 @@ export const formatSupportCard = (data?: SupportData) => {
 			formattedType = chalk.redBright(c.type);
 			break;
 		case 'Power':
-		case 'Friend':
+		case 'Pal':
 			formattedType = chalk.hex('#DB8500')(c.type);
 			break;
 		case 'Guts':
