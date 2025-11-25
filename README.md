@@ -21,7 +21,13 @@ cd uma-trainer-finder
 npm install
 ```
 
-### 3. Link CLI ke Sistem
+### 3. Build Program
+
+```bash
+npm run build
+```
+
+### 4. Link CLI ke Sistem
 
 ```bash
 npm run link-cli
@@ -29,7 +35,7 @@ npm run link-cli
 
 > Setelah itu, kamu bisa langsung pakai perintah `uma-cli` di terminal tanpa perlu masuk ke folder proyek.
 
-### 4. Jalankan Program
+### 5. Jalankan Program
 
 ```bash
 uma-cli [option]
