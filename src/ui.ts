@@ -80,7 +80,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 						value: '__toggleUpcoming',
 						status: 'option',
 					},
-				]
+			  ]
 			: baseOpts;
 
 		const inquirerChoices = list.map((o) => ({
@@ -96,7 +96,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		try {
 			const { chosen } = (await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>([
 				{
-					type: 'list',
+					type: 'select',
 					name: 'chosen',
 					message: chalk.bold(msg + (withToggle ? ` (${chalk.greenBright('↑')}/${chalk.greenBright('↓')} lalu ${chalk.greenBright('Enter')})` : '')),
 					choices: inquirerChoices,
