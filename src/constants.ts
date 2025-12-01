@@ -97,7 +97,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'K.S. Miracle (Prism)', value: 109301, status: 'upcoming' },
 	{ name: 'Katsuragi Ace (Dragon Rising to the Top)', value: 110401, status: 'upcoming' },
 	{ name: 'Katsuragi Ace (Pen Name: Ink Dragon)', value: 110402, status: 'upcoming' },
-	{ name: 'Kawakami Princess (Princess of Pink)', value: 103901, status: 'upcoming' },
+	{ name: 'Kawakami Princess (Princess of Pink)', value: 103901, status: 'released' },
 	{ name: 'Kawakami Princess (Suikan Beauty)', value: 103902, status: 'upcoming' },
 	{ name: 'King Halo (Evergreen Identity)', value: 106103, status: 'upcoming' },
 	{ name: 'King Halo (King of Emeralds)', value: 106101, status: 'released' },
