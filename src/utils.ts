@@ -61,6 +61,13 @@ export const formatSupportCard = (data?: SupportData) => {
  * @returns Daftar nama Sparks yang sesuai, dipisahkan koma.
  */
 export const formatSpark = (sparks: number[]) => {
+	const color = {
+		blue: (t: string) => chalk.bgBlue(chalk.whiteBright(` ${t} `)),
+		pink: (t: string) => chalk.bgMagenta(chalk.whiteBright(` ${t} `)),
+		green: (t: string) => chalk.bgGreen(chalk.whiteBright(` ${t} `)),
+		white: (t: string) => chalk.bgGray(chalk.whiteBright(` ${t} `)),
+	} as const;
+
 	/**
 	 * Membuat array Spark dengan nama dan value sesuai kategori dan bintang.
 	 *
@@ -68,26 +75,21 @@ export const formatSpark = (sparks: number[]) => {
 	 * menghasilkan array baru dengan nama Sparks yang sudah ditambahkan bintang
 	 * (1★–N★) sesuai `starCount`.
 	 *
-	 * @param arr - Array Sparks dasar.
+	 * @param arr  - Array Sparks dasar.
+	 * @param type - Tipe Sparks.
 	 * @returns Array Sparks yang sudah diformat dengan bintang.
 	 */
-	const makeSparks = (arr: Option<number>[]) =>
-		arr.flatMap(({ name, value }) => {
-			const maxStars = value.toString().length === 8 ? 3 : 9;
-			return Array.from({ length: maxStars }, (_, i) => ({
-				name: `${i + 1}${chalk.yellow('★')} ${name}`,
+	const makeSparks = (arr: Option<number>[], type: keyof typeof color) =>
+		arr.flatMap(({ name, value }) =>
+			Array.from({ length: value.toString().length === 8 ? 3 : 9 }, (_, i) => ({
+				name: color[type](`${i + 1}${chalk.yellow('★')} ${name}`),
 				value: value + i,
-			}));
-		});
+			}))
+		);
 
-	const sparkOptions: Option<number>[] = [...makeSparks(blueSparkOptions), ...makeSparks(pinkSparkOptions), ...makeSparks(greenSparkOptions), ...makeSparks(whiteSparkOptions)];
+	const opts: Option<number>[] = [...makeSparks(blueSparkOptions, 'blue'), ...makeSparks(pinkSparkOptions, 'pink'), ...makeSparks(greenSparkOptions, 'green'), ...makeSparks(whiteSparkOptions, 'white')];
 
-	return sparks
-		.map((s) => {
-			const opt = sparkOptions.find((o) => o.value === s);
-			return opt ? opt.name : '?';
-		})
-		.join(' | ');
+	return sparks.map((s) => opts.find((o) => o.value === s)?.name ?? chalk.redBright(' ? ')).join(' ');
 };
 
 /**
