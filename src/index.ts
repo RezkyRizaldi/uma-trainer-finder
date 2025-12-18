@@ -25,6 +25,7 @@ import pkg from '../package.json';
 (async () => {
 	const mapping: Record<string, SearchSortingQuery> = {
 		rank: 'parent_rank',
+		affinity: 'affinity_score',
 		win: 'win_count',
 		sparks: 'white_count',
 		latest: 'last_updated',

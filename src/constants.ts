@@ -224,7 +224,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Tokai Teio (Peak Joy)', value: 100301, status: 'released' },
 	{ name: 'Tosen Jordan (Aurore☆Vacances)', value: 104802, status: 'upcoming' },
 	{ name: 'Tosen Jordan (Highkey ☆ Hallowed)', value: 104803, status: 'upcoming' },
-	{ name: 'Tosen Jordan (Pop ☆ Joker)', value: 104801, status: 'upcoming' },
+	{ name: 'Tosen Jordan (Jokester ☆ Vibes)', value: 104801, status: 'released' },
 	{ name: 'Transcend (Twilight Neo Kagura)', value: 108002, status: 'upcoming' },
 	{ name: 'Transcend (ZOKU-ZOKU GIZMO)', value: 108001, status: 'upcoming' },
 	{ name: 'Tsurumaru Tsuyoshi (Dream Bold, Stand Tall, Tsuyoshi!)', value: 107301, status: 'upcoming' },

@@ -69,6 +69,9 @@ export interface InheritanceData {
 	/** Daftar white spark (skill). */
 	white_sparks: number[];
 
+	/** Jumlah nilai afinitas. */
+	affinity_score: number;
+
 	/** Jumlah kemenangan balapan G1. */
 	win_count: number;
 
@@ -146,4 +149,4 @@ export interface SupportCard {
 }
 
 /** Struktur query untuk menyortir urutan data hasil pencarian. */
-export type SearchSortingQuery = 'parent_rank' | 'win_count' | 'white_count' | 'last_updated';
+export type SearchSortingQuery = 'parent_rank' | 'affinity_score' | 'win_count' | 'white_count' | 'last_updated';
