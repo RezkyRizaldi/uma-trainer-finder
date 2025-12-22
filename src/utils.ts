@@ -89,7 +89,7 @@ export const formatSpark = (sparks: number[]) => {
 
 	const opts: Option<number>[] = [...makeSparks(blueSparkOptions, 'blue'), ...makeSparks(pinkSparkOptions, 'pink'), ...makeSparks(greenSparkOptions, 'green'), ...makeSparks(whiteSparkOptions, 'white')];
 
-	return sparks.map((s) => opts.find((o) => o.value === s)?.name ?? chalk.redBright(' ? ')).join(' ');
+	return sparks.map((s) => opts.find((o) => o.value === s)?.name ?? '?').join(' | ');
 };
 
 /**

@@ -199,6 +199,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: "Special Week (Hopp'n♪Happy Heart)", value: 100102, status: 'released' },
 	{ name: 'Special Week (Special Dreamer)', value: 100101, status: 'released' },
 	{ name: 'Special Week (Supreme Commander of the Rising Sun)', value: 100103, status: 'upcoming' },
+	{ name: 'Stay Gold (Sunlit Outsider)', value: 113501, status: 'upcoming' },
 	{ name: 'Still In Love (Scarlet Vow Raiment)', value: 109701, status: 'upcoming' },
 	{ name: 'Super Creek (Chiffon-Wrapped Mummy)', value: 104502, status: 'released' },
 	{ name: 'Super Creek (Flowery Shadow Amongst the Gentle Rain)', value: 104503, status: 'upcoming' },
