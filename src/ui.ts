@@ -6,6 +6,11 @@ import type { OptionWithSpecial, SearchResult } from './types';
 import { formatSpark, formatSupportCard, traineeMap } from './utils';
 
 /**
+ * State untuk toggle tampilan karakter upcoming.
+ */
+let showUpcoming = false;
+
+/**
  * Mencetak hasil pencarian dalam bentuk tabel ke console.
  *
  * Fungsi ini:
@@ -65,8 +70,6 @@ export const printTable = (data: SearchResult[]) => {
  * @returns Promise yang menyelesaikan dengan opsi yang dipilih user.
  */
 export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<OptionWithSpecial<T>> => {
-	let showUpcoming = false;
-
 	while (true) {
 		if (clearScreen) process.stdout.write('\x1bc');
 		persistentRenderer?.();
@@ -80,7 +83,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 						value: '__toggleUpcoming',
 						status: 'option',
 					},
-			  ]
+				]
 			: baseOpts;
 
 		const inquirerChoices = list.map((o) => ({
