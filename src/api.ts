@@ -1,7 +1,5 @@
 import type { ApiResponse, SearchResult, SearchSortingQuery } from './types';
 
-const EMPTY: ApiResponse = { items: [], total: 0, page: 0, limit: 0, total_pages: 0 };
-
 /**
  * Fetch data dari API (inheritance search, banyak halaman).
  *
