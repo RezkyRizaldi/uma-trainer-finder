@@ -114,12 +114,21 @@ import pkg from '../package.json';
 						[...traineeOptions.filter((h) => !excludeBases2.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 						`Pilih Grandsire untuk ${chalk.yellowBright(sire.name)}`
 					);
+
 					if (gSire.value === null) {
 						sire = await chooseOption(traineeOptions, 'Pilih Sire');
 						continue;
 					}
+
+					if (gSire.value === 'skip') {
+						gDam = { name: '⏩ Lewati', value: 'skip', status: 'option' };
+						break;
+					}
+
 					break;
 				}
+
+				if (gDam.value === 'skip') break;
 				continue;
 			}
 			break;
@@ -170,7 +179,15 @@ import pkg from '../package.json';
 			if (!isLoading && data.length > 0) printTable(data);
 		};
 
-		if (consecutiveFails >= 5) break;
+		if (consecutiveFails >= 5) {
+			if (data.length === 0) {
+				console.log(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman.`);
+			} else {
+				console.log(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan.`);
+				printTable(data);
+			}
+			break;
+		}
 
 		const nextAction = await chooseOption(
 			[
