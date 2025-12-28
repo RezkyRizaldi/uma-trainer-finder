@@ -2,6 +2,7 @@
 
 import chalk from 'chalk';
 import { distance } from 'fastest-levenshtein';
+import ora from 'ora';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 
@@ -43,12 +44,14 @@ import pkg from '../package.json';
 
 		if (flagName && !validFlags.includes(flagName)) {
 			let suggestion = `\n💡 Gunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`;
+
 			for (const vFlag of validFlags) {
 				if (distance(flagName, vFlag) <= 2) {
 					suggestion = `, mungkin maksud Anda: ${chalk.bold(vFlag)}. Gunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`;
 					break;
 				}
 			}
+
 			console.error(`❌ Flag ${chalk.bold(flagName)} tidak dikenal${suggestion}`);
 			process.exit(1);
 		}
@@ -102,6 +105,7 @@ import pkg from '../package.json';
 	if (gSire.value !== 'skip') {
 		while (true) {
 			const excludeBases = [getBaseName(sire.name), getBaseName(gSire.name)];
+
 			gDam = await chooseOption(
 				[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 				`Pilih Granddam untuk ${chalk.yellowBright(sire.name)} x ${chalk.yellowBright(gSire.name)}`
@@ -110,6 +114,7 @@ import pkg from '../package.json';
 			if (gDam.value === null) {
 				while (true) {
 					const excludeBases2 = [getBaseName(sire.name)];
+
 					gSire = await chooseOption(
 						[...traineeOptions.filter((h) => !excludeBases2.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 						`Pilih Grandsire untuk ${chalk.yellowBright(sire.name)}`
@@ -117,6 +122,7 @@ import pkg from '../package.json';
 
 					if (gSire.value === null) {
 						sire = await chooseOption(traineeOptions, 'Pilih Sire');
+
 						continue;
 					}
 
@@ -129,6 +135,7 @@ import pkg from '../package.json';
 				}
 
 				if (gDam.value === 'skip') break;
+
 				continue;
 			}
 			break;
@@ -144,10 +151,15 @@ import pkg from '../package.json';
 
 	while (consecutiveFails < 5) {
 		isLoading = true;
-		process.stdout.write('\x1bc');
-		console.log(`⏳ Sedang mengambil data untuk ${chalk.yellowBright(sire.name) + grandInfo} di halaman ${pageStart} ...`);
+
+		console.log('');
+
+		const spinner = ora(`Sedang mengambil data untuk ${chalk.yellowBright(sire.name) + grandInfo} di halaman ${pageStart} s/d ${pageStart + 19}...`).start();
 
 		const newData = await fetchAllPages(sire.value as number, gSire.value !== 'skip' ? (gSire.value as number) : null, gDam?.value !== 'skip' ? (gDam?.value as number) : null, pageStart, sortBy);
+
+		spinner.stop();
+
 		isLoading = false;
 
 		const trulyNewData = newData.filter((nd) => !data.some((d) => d.account_id === nd.account_id));
@@ -176,6 +188,7 @@ import pkg from '../package.json';
 		 */
 		const persistentRenderer = (): void => {
 			console.log(isLoading ? `⏳ Sedang mengambil data untuk ${sire.name + grandInfo} di halaman ${pageStart} ...` : statusMessage);
+
 			if (!isLoading && data.length > 0) printTable(data);
 		};
 
@@ -184,6 +197,7 @@ import pkg from '../package.json';
 				console.log(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman.`);
 			} else {
 				console.log(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan.`);
+
 				printTable(data);
 			}
 			break;
