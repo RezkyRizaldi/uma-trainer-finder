@@ -48,6 +48,7 @@
     "fastest-levenshtein": "^1.0.16",
     "inquirer": "^13.1.0",
     "ora": "^9.0.0",
+    "strip-ansi": "^7.1.2",
     "table": "^6.9.0",
     "yargs": "^18.0.0"
   }

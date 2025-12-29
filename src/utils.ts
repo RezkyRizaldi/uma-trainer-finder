@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import chalk from 'chalk';
+import stripAnsi from 'strip-ansi';
 
 import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants';
 import type { Option, SearchResult, SupportCard, SupportData } from './types';
@@ -134,7 +135,7 @@ export const exportData = (data: SearchResult[], format: 'csv' | 'json'): string
 			const rows = data
 				.map(
 					(d) =>
-						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${formatSupportCard(d.support_card)}","${formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])])}"`
+						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${stripAnsi(formatSupportCard(d.support_card))}","${stripAnsi(formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]))}"`
 				)
 				.join('\n');
 

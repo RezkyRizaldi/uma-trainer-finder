@@ -23,7 +23,7 @@ import pkg from '../package.json';
  *
  * @param data - Data hasil pencarian yang akan diekspor.
  * @param exportFormat - Format ekspor ('csv' atau 'json'), opsional.
- * @returns Tidak mengembalikan nilai (void).
+ * @returns Promise dengan nama file yang dibuat jika sukses, atau `null` jika tidak ada data * atau user membatalkan.
  */
 const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<string | null> => {
 	if (data.length === 0) return null;
