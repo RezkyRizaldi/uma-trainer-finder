@@ -2,7 +2,7 @@
 
 > **CLI sederhana untuk mencari dan mengurutkan data inheritance di game _Umamusume: Pretty Derby_.**
 
-Uma Trainer Finder dibuat supaya kamu bisa dengan mudah melihat urutan pelatih berdasarkan rank, skor afinitas, kemenangan G1, white sparks, atau data terbaru — tanpa repot cari manual.
+Uma Trainer Finder dibuat supaya kamu bisa dengan mudah melihat bahkan menyimpan urutan pelatih berdasarkan rank, skor afinitas, kemenangan G1, white sparks, atau data terbaru — tanpa repot cari manual.
 
 ---
 
@@ -50,6 +50,8 @@ uma-cli [option]
 | `--sort=win`      | Urut berdasarkan jumlah kemenangan G1      |
 | `--sort=sparks`   | Urut berdasarkan jumlah white sparks       |
 | `--sort=latest`   | Urut berdasarkan data terbaru              |
+| `--export=csv`    | Ekspor hasil pencarian dalam format CSV    |
+| `--export=json`   | Ekspor hasil pencarian dalam format JSON   |
 | `--help`, `-h`    | Menampilkan panduan penggunaan             |
 | `--version`, `-v` | Menampilkan versi program                  |
 

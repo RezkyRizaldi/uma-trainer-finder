@@ -2,6 +2,7 @@
 
 import chalk from 'chalk';
 import { distance } from 'fastest-levenshtein';
+import inquirer from 'inquirer';
 import ora from 'ora';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
@@ -10,8 +11,52 @@ import { fetchAllPages } from './api';
 import { traineeOptions } from './constants';
 import type { OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
 import { chooseOption, printTable } from './ui';
-import { getBaseName } from './utils';
+import { exportData, getBaseName } from './utils';
 import pkg from '../package.json';
+
+/**
+ * Handle export prompt.
+ *
+ * Menangani prompt untuk export data hasil pencarian.
+ * Jika exportFormat diberikan, langsung export dengan format tersebut.
+ * Jika tidak, tampilkan prompt konfirmasi dan pilih format via list.
+ *
+ * @param data - Data hasil pencarian yang akan diekspor.
+ * @param exportFormat - Format ekspor ('csv' atau 'json'), opsional.
+ * @returns Tidak mengembalikan nilai (void).
+ */
+const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<void> => {
+	if (data.length === 0) return;
+
+	let format: 'csv' | 'json' | null = null;
+
+	if (exportFormat) {
+		format = exportFormat as 'csv' | 'json';
+	} else {
+		const { shouldExport } = await inquirer.prompt<{ shouldExport: boolean }>({
+			type: 'confirm',
+			name: 'shouldExport',
+			message: 'Apakah Anda ingin menyimpan hasil pencarian?',
+			default: false,
+		});
+
+		if (!shouldExport) return;
+
+		const { exportFormat } = await inquirer.prompt<{ exportFormat: 'csv' | 'json' }>({
+			type: 'select',
+			name: 'exportFormat',
+			message: 'Pilih format ekspor:',
+			choices: [
+				{ name: 'CSV', value: 'csv' },
+				{ name: 'JSON', value: 'json' },
+			],
+		});
+
+		format = exportFormat;
+	}
+
+	exportData(data, format);
+};
 
 /**
  * Main loop program.
@@ -35,7 +80,7 @@ import pkg from '../package.json';
 	let sortBy: SearchSortingQuery = 'parent_rank';
 
 	const rawArgs = process.argv.slice(2);
-	const validFlags = ['--help', '--sort', '--version'];
+	const validFlags = ['--export', '--help', '--sort', '--version'];
 
 	for (const raw of rawArgs) {
 		const [flagName] = raw.split('=');
@@ -64,11 +109,16 @@ import pkg from '../package.json';
 			describe: 'Atur metode pengurutan hasil',
 			choices: Object.keys(mapping),
 		})
+		.option('export', {
+			type: 'string',
+			describe: 'Export hasil pencarian ke dalam format file',
+			choices: ['csv', 'json'],
+		})
 		.version(pkg.version)
 		.alias('version', 'v')
 		.help('help')
 		.alias('help', 'h')
-		.parseSync() as { sort?: string; version?: boolean };
+		.parseSync() as { sort?: string; export?: string; version?: boolean };
 
 	if (argv.sort) {
 		const val = argv.sort;
@@ -84,8 +134,14 @@ import pkg from '../package.json';
 		}
 	}
 
-	resetLoop: while (true) {
-		process.stdout.write('\x1bc'); // Clear screen saat reset
+	if (argv.export) {
+		if (argv.export !== 'csv' && argv.export !== 'json') {
+			console.error(`❌ Value ${chalk.bold(argv.export)} tidak dikenal. Gunakan 'csv' atau 'json'.\n\n${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`);
+			process.exit(1);
+		}
+	}
+
+	while (true) {
 		let sire = await chooseOption(traineeOptions, 'Pilih Sire');
 
 		let gSire: OptionWithSpecial<number> | null = null;
@@ -151,6 +207,8 @@ import pkg from '../package.json';
 
 		const grandInfo = gSire.value !== 'skip' ? ` [${chalk.yellowBright(gSire.name)}${gDam?.value !== 'skip' ? ` x ${chalk.yellowBright(gDam?.name)}` : ''}]` : '';
 
+		let shouldReset = false;
+
 		while (consecutiveFails < 5) {
 			isLoading = true;
 
@@ -194,7 +252,9 @@ import pkg from '../package.json';
 			const persistentRenderer = (): void => {
 				console.log(isLoading ? `⏳ Sedang mengambil data untuk ${sire.name + grandInfo} di halaman ${pageStart} ...` : statusMessage);
 
-				if (!isLoading && data.length > 0) printTable(data);
+				if (!isLoading && data.length > 0) {
+					printTable(data);
+				}
 			};
 
 			if (consecutiveFails >= 5) {
@@ -204,15 +264,17 @@ import pkg from '../package.json';
 					console.log(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan.`);
 
 					printTable(data);
+
+					await handleExportPrompt(data, argv.export);
 				}
 				break;
 			}
 
 			const nextAction = await chooseOption(
 				[
-					{ name: '➡️ Lanjut', value: 'next', status: 'option' },
-					{ name: '🔙 Kembali', value: 'reset', status: 'option' },
-					{ name: '🛑 Berhenti', value: 'stop', status: 'option' },
+					{ name: '➡️  Lanjut', value: 'next', status: 'option' as const },
+					{ name: '🔙 Kembali', value: 'reset', status: 'option' as const },
+					{ name: '🛑 Berhenti', value: 'stop', status: 'option' as const },
 				],
 				'\nCari di Halaman Berikutnya',
 				true,
@@ -220,16 +282,27 @@ import pkg from '../package.json';
 				false
 			);
 
-			if (nextAction.value === 'stop') process.exit(0);
+			if (nextAction.value === 'stop') {
+				await handleExportPrompt(data, argv.export);
+				process.exit(0);
+			}
 
 			if (nextAction.value === 'reset') {
-				data.length = 0;
-				pageStart = 1;
-				consecutiveFails = 0;
-				continue resetLoop;
+				await handleExportPrompt(data, argv.export);
+
+				shouldReset = true;
+				break;
 			}
 
 			pageStart += 20;
+		}
+
+		if (shouldReset) {
+			shouldReset = false;
+			data.length = 0;
+			pageStart = 1;
+			consecutiveFails = 0;
+			continue;
 		}
 	}
 })();
