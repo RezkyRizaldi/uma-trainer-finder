@@ -115,9 +115,9 @@ export const getBaseName = (name: string) => name.replace(/\s*\(.*?\)\s*/g, '').
  *
  * @param data - Array data hasil pencarian.
  * @param format - Format file: 'csv' atau 'json'.
- * @returns Tidak mengembalikan nilai, hanya menyimpan file dan mencetak pesan.
+ * @returns Nama file yang dibuat jika sukses, atau `null` jika gagal/tdk dibuat.
  */
-export const exportData = (data: SearchResult[], format: 'csv' | 'json'): void => {
+export const exportData = (data: SearchResult[], format: 'csv' | 'json'): string | null => {
 	try {
 		const dir = path.join('exports', format);
 
@@ -141,8 +141,9 @@ export const exportData = (data: SearchResult[], format: 'csv' | 'json'): void =
 			fs.writeFileSync(filename, headers + rows);
 		}
 
-		console.log(`✅ Data diekspor ke ${filename}`);
+		return filename;
 	} catch (error) {
 		console.error(`❌ Gagal mengekspor data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		return null;
 	}
 };

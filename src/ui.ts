@@ -79,7 +79,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 			? [
 					...baseOpts,
 					{
-						name: showUpcoming ? '🚫 Sembunyikan karakter yang akan datang' : '👁️  Tampilkan karakter yang akan datang',
+						name: showUpcoming ? '🚫 Sembunyikan karakter yang akan datang' : '👁️ Tampilkan karakter yang akan datang',
 						value: '__toggleUpcoming',
 						status: 'option',
 					},
