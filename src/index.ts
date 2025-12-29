@@ -25,8 +25,8 @@ import pkg from '../package.json';
  * @param exportFormat - Format ekspor ('csv' atau 'json'), opsional.
  * @returns Tidak mengembalikan nilai (void).
  */
-const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<void> => {
-	if (data.length === 0) return;
+const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<string | null> => {
+	if (data.length === 0) return null;
 
 	let format: 'csv' | 'json' | null = null;
 
@@ -40,7 +40,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			default: false,
 		});
 
-		if (!shouldExport) return;
+		if (!shouldExport) return null;
 
 		const { exportFormat } = await inquirer.prompt<{ exportFormat: 'csv' | 'json' }>({
 			type: 'select',
@@ -55,7 +55,8 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		format = exportFormat;
 	}
 
-	exportData(data, format);
+	const filename = exportData(data, format!);
+	return filename;
 };
 
 /**
@@ -141,8 +142,17 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		}
 	}
 
+	let exportFeedback: string | null = null;
+
 	while (true) {
-		let sire = await chooseOption(traineeOptions, 'Pilih Sire');
+		const persistentRendererForSire = (): void => {
+			if (exportFeedback) {
+				console.log(exportFeedback);
+				exportFeedback = null;
+			}
+		};
+
+		let sire = await chooseOption(traineeOptions, 'Pilih Sire', true, persistentRendererForSire);
 
 		let gSire: OptionWithSpecial<number> | null = null;
 		while (true) {
@@ -272,7 +282,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			const nextAction = await chooseOption(
 				[
-					{ name: '➡️  Lanjut', value: 'next', status: 'option' as const },
+					{ name: '➡️ Lanjut', value: 'next', status: 'option' as const },
 					{ name: '🔙 Kembali', value: 'reset', status: 'option' as const },
 					{ name: '🛑 Berhenti', value: 'stop', status: 'option' as const },
 				],
@@ -288,7 +298,8 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			}
 
 			if (nextAction.value === 'reset') {
-				await handleExportPrompt(data, argv.export);
+				const exported = await handleExportPrompt(data, argv.export);
+				if (exported) exportFeedback = `✅ Data berhasil diekspor ke ${exported}\n`;
 
 				shouldReset = true;
 				break;
