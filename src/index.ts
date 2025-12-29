@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 
 import chalk from 'chalk';
-import { distance } from 'fastest-levenshtein';
+import { Command } from 'commander';
 import inquirer from 'inquirer';
 import ora from 'ora';
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
 
 import { fetchAllPages } from './api';
 import { traineeOptions } from './constants';
@@ -23,7 +21,7 @@ import pkg from '../package.json';
  *
  * @param data - Data hasil pencarian yang akan diekspor.
  * @param exportFormat - Format ekspor ('csv' atau 'json'), opsional.
- * @returns Promise dengan nama file yang dibuat jika sukses, atau `null` jika tidak ada data * atau user membatalkan.
+ * @returns Promise dengan nama file yang dibuat jika sukses, atau `null` jika tidak ada data atau user membatalkan.
  */
 const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<string | null> => {
 	if (data.length === 0) return null;
@@ -55,8 +53,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		format = exportFormat;
 	}
 
-	const filename = exportData(data, format!);
-	return filename;
+	return exportData(data, format!);
 };
 
 /**
@@ -80,66 +77,35 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 	let sortBy: SearchSortingQuery = 'parent_rank';
 
-	const rawArgs = process.argv.slice(2);
-	const validFlags = ['--export', '--help', '--sort', '--version'];
-
-	for (const raw of rawArgs) {
-		const [flagName] = raw.split('=');
-
-		if (flagName && !flagName.startsWith('--')) continue;
-
-		if (flagName && !validFlags.includes(flagName)) {
-			let suggestion = `\n💡 Gunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`;
-
-			for (const vFlag of validFlags) {
-				if (distance(flagName, vFlag) <= 2) {
-					suggestion = `, mungkin maksud Anda: ${chalk.bold(vFlag)}. Gunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`;
-					break;
-				}
-			}
-
-			console.error(`❌ Flag ${chalk.bold(flagName)} tidak dikenal${suggestion}`);
-			process.exit(1);
-		}
-	}
-
-	const argv = yargs(hideBin(process.argv))
-		.usage('Usage: uma-cli [options]')
-		.option('sort', {
-			type: 'string',
-			describe: 'Atur metode pengurutan hasil',
-			choices: Object.keys(mapping),
-		})
-		.option('export', {
-			type: 'string',
-			describe: 'Export hasil pencarian ke dalam format file',
-			choices: ['csv', 'json'],
-		})
+	const program = new Command();
+	program
+		.name('uma-cli')
+		.description('CLI untuk mencari data inheritance Umamusume: Pretty Derby')
 		.version(pkg.version)
-		.alias('version', 'v')
-		.help('help')
-		.alias('help', 'h')
-		.parseSync() as { sort?: string; export?: string; version?: boolean };
+		.option('-s, --sort <type>', `Atur metode pengurutan hasil\n<${Object.keys(mapping).join(', ')}>`, (value) => {
+			if (!mapping[value]) {
+				console.error(
+					`❌ Value ${chalk.bold(value)} tidak dikenal. Gunakan salah satu: ${Object.keys(mapping)
+						.map((k) => chalk.greenBright(k))
+						.join(', ')}.\nGunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`
+				);
+				process.exit(1);
+			}
+			return mapping[value];
+		})
+		.option('-e, --export <format>', `Export hasil pencarian ke dalam format file\n<csv, json>`, (value) => {
+			if (value !== 'csv' && value !== 'json') {
+				console.error(`❌ Value ${chalk.bold(value)} tidak dikenal. Gunakan ${chalk.greenBright('csv')} atau ${chalk.greenBright('json')}.\nGunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`);
+				process.exit(1);
+			}
+			return value;
+		});
 
-	if (argv.sort) {
-		const val = argv.sort;
-		if (mapping[val]) {
-			sortBy = mapping[val];
-		} else {
-			console.error(
-				`❌ Value ${chalk.bold(val)} tidak dikenal. Gunakan salah satu: ${Object.keys(mapping)
-					.map((k) => chalk.greenBright(`--sort=${k}`))
-					.join(', ')}\n\n${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`
-			);
-			process.exit(1);
-		}
-	}
+	program.parse();
+	const options = program.opts();
 
-	if (argv.export) {
-		if (argv.export !== 'csv' && argv.export !== 'json') {
-			console.error(`❌ Value ${chalk.bold(argv.export)} tidak dikenal. Gunakan 'csv' atau 'json'.\n\n${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`);
-			process.exit(1);
-		}
+	if (options.sort) {
+		sortBy = options.sort;
 	}
 
 	let exportFeedback: string | null = null;
@@ -275,7 +241,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 					printTable(data);
 
-					await handleExportPrompt(data, argv.export);
+					await handleExportPrompt(data, options.export);
 				}
 				break;
 			}
@@ -293,12 +259,12 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			);
 
 			if (nextAction.value === 'stop') {
-				await handleExportPrompt(data, argv.export);
+				await handleExportPrompt(data, options.export);
 				process.exit(0);
 			}
 
 			if (nextAction.value === 'reset') {
-				const exported = await handleExportPrompt(data, argv.export);
+				const exported = await handleExportPrompt(data, options.export);
 				if (exported) exportFeedback = `✅ Data berhasil diekspor ke ${exported}\n`;
 
 				shouldReset = true;
