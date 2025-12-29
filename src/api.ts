@@ -20,15 +20,21 @@ const cache = new Map<string, ApiResponse>();
 export const fetchAllPages = async (sire: number, gSire: number | null = null, gDam: number | null = null, startPage: number = 0, sortBy: SearchSortingQuery = 'parent_rank'): Promise<SearchResult[]> => {
 	try {
 		const pages = Array.from({ length: 10 }, (_, i) => startPage + i);
+
 		const responses = await Promise.all(
 			pages.map(async (page) => {
 				const key = `${sire}-${gSire ?? 'null'}-${gDam ?? 'null'}-${sortBy}-${page}`;
+
 				if (cache.has(key)) return cache.get(key)!;
 
 				const url = `https://uma.moe/api/v3/search?page=${page}&limit=12&search_type=inheritance&main_parent_id=${sire}&sort_by=${sortBy}&sort_order=desc&max_follower_num=1000`;
+
 				const res = await fetch(url);
+
 				const data: ApiResponse = res.ok ? ((await res.json()) as ApiResponse) : { items: [], total: 0, page, limit: 0, total_pages: 0 };
+
 				cache.set(key, data);
+
 				return data;
 			})
 		);
@@ -37,9 +43,13 @@ export const fetchAllPages = async (sire: number, gSire: number | null = null, g
 			.flatMap((p) => p.items ?? [])
 			.filter(({ inheritance }) => {
 				if (!inheritance) return false;
+
 				const { parent_left_id: l, parent_right_id: r } = inheritance;
+
 				if (gSire && gDam) return (l === gSire && r === gDam) || (l === gDam && r === gSire);
+
 				if (gSire) return l === gSire || r === gSire;
+
 				return true;
 			});
 	} catch {

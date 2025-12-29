@@ -91,6 +91,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 				);
 				process.exit(1);
 			}
+
 			return mapping[value];
 		})
 		.option('-e, --export <format>', `Export hasil pencarian ke dalam format file\n<csv, json>`, (value) => {
@@ -98,6 +99,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 				console.error(`❌ Value ${chalk.bold(value)} tidak dikenal. Gunakan ${chalk.greenBright('csv')} atau ${chalk.greenBright('json')}.\nGunakan ${chalk.bold('--help')} untuk melihat daftar flag dan contoh penggunaannya.`);
 				process.exit(1);
 			}
+
 			return value;
 		});
 
@@ -121,8 +123,10 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		let sire = await chooseOption(traineeOptions, 'Pilih Sire', true, persistentRendererForSire);
 
 		let gSire: OptionWithSpecial<number> | null = null;
+
 		while (true) {
 			const excludeBases = [getBaseName(sire.name)];
+
 			gSire = await chooseOption(
 				[...traineeOptions.filter((h) => !excludeBases.includes(getBaseName(h.name))), { name: '⏩ Lewati', value: 'skip', status: 'option' }, { name: '🔙 Kembali', value: null, status: 'option' }],
 				`Pilih Grandsire untuk ${chalk.yellowBright(sire.name)}`
@@ -130,12 +134,15 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			if (gSire.value === null) {
 				sire = await chooseOption(traineeOptions, 'Pilih Sire');
+
 				continue;
 			}
+
 			break;
 		}
 
 		let gDam: OptionWithSpecial<number> | null = null;
+
 		if (gSire.value !== 'skip') {
 			while (true) {
 				const excludeBases = [getBaseName(sire.name), getBaseName(gSire.name)];
@@ -162,6 +169,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 						if (gSire.value === 'skip') {
 							gDam = { name: '⏩ Lewati', value: 'skip', status: 'option' };
+
 							break;
 						}
 
@@ -172,6 +180,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 					continue;
 				}
+
 				break;
 			}
 		}
@@ -180,17 +189,15 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		let consecutiveFails = 0;
 		let isLoading = false;
 		const data: SearchResult[] = [];
-
 		const grandInfo = gSire.value !== 'skip' ? ` [${chalk.yellowBright(gSire.name)}${gDam?.value !== 'skip' ? ` x ${chalk.yellowBright(gDam?.name)}` : ''}]` : '';
-
 		let shouldReset = false;
 
 		while (consecutiveFails < 5) {
 			isLoading = true;
 
 			const spinner = ora(`Sedang mengambil data untuk ${chalk.yellowBright(sire.name) + grandInfo} di halaman ${pageStart} s/d ${pageStart + 19}...`).start();
-
 			let newData: SearchResult[];
+
 			try {
 				newData = await fetchAllPages(sire.value as number, gSire.value !== 'skip' ? (gSire.value as number) : null, gDam?.value !== 'skip' ? (gDam?.value as number) : null, pageStart, sortBy);
 			} finally {
@@ -205,11 +212,11 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			if (trulyNewData.length > 0) {
 				data.push(...trulyNewData);
-				statusMessage = `✅ Ditemukan ${trulyNewData.length} data baru di halaman ${pageStart} s/d ${pageStart + 19}`;
+				statusMessage = `✅ Ditemukan ${trulyNewData.length} data baru di halaman ${pageStart} s/d ${pageStart + 19}.`;
 				color = 'green';
 				consecutiveFails = 0;
 			} else {
-				statusMessage = `⚠️ Tidak ditemukan data di halaman ${pageStart} s/d ${pageStart + 19}`;
+				statusMessage = `⚠️ Tidak ditemukan data di halaman ${pageStart} s/d ${pageStart + 19}.`;
 				color = 'yellow';
 				consecutiveFails++;
 			}
@@ -230,7 +237,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 				if (isLoading) {
 					console.log(`⏳ Sedang mengambil data untuk ${sire.name + grandInfo} di halaman ${pageStart} ...`);
 				} else {
-					console.log(`🔍 Hasil fetching data untuk ${chalk.yellowBright(sire.name) + grandInfo}\n`);
+					console.log(`🔍 Hasil fetching data untuk ${chalk.yellowBright(sire.name) + grandInfo}:\n`);
 					printBoxedMessage(statusMessage, color);
 					console.log('');
 				}
@@ -242,14 +249,14 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			if (consecutiveFails >= 5) {
 				if (data.length === 0) {
-					printBoxedMessage(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman`, 'red');
+					printBoxedMessage(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman.`, 'red');
 					process.exit(0);
 				} else {
-					printBoxedMessage(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan`, 'yellow');
-
+					printBoxedMessage(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan.`, 'yellow');
 					printTable(data);
 
 					await handleExportPrompt(data, options.export);
+
 					process.exit(0);
 				}
 				break;
@@ -269,14 +276,17 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			if (nextAction.value === 'stop') {
 				await handleExportPrompt(data, options.export);
+
 				process.exit(0);
 			}
 
 			if (nextAction.value === 'reset') {
 				const exported = await handleExportPrompt(data, options.export);
-				if (exported) exportFeedback = `✅ Data berhasil diekspor ke ${exported}\n`;
+
+				if (exported) exportFeedback = `✅ Data berhasil diekspor ke ${exported}.\n`;
 
 				shouldReset = true;
+
 				break;
 			}
 
@@ -288,6 +298,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			data.length = 0;
 			pageStart = 1;
 			consecutiveFails = 0;
+
 			continue;
 		}
 	}

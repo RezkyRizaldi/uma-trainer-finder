@@ -87,14 +87,12 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 					},
 				]
 			: baseOpts;
-
 		const inquirerChoices = list.map((o) => ({
 			name: o.name,
 			value: o,
 			short: o.name,
 			disabled: o.status === 'upcoming' ? chalk.italic.bold('<Upcoming>') : o.status === 'unreleased' ? chalk.italic.bold('<Unreleased>') : false,
 		}));
-
 		const firstSelectableIndex = inquirerChoices.findIndex((c) => !c.disabled);
 		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex]?.value : undefined;
 
@@ -113,6 +111,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 
 			if (chosen.value === '__toggleUpcoming') {
 				showUpcoming = !showUpcoming;
+
 				continue;
 			}
 
