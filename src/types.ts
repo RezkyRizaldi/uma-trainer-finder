@@ -150,3 +150,9 @@ export interface SupportCard {
 
 /** Struktur query untuk menyortir urutan data hasil pencarian. */
 export type SearchSortingQuery = 'parent_rank' | 'affinity_score' | 'win_count' | 'white_count' | 'last_updated';
+
+/** Struktur opsi CLI yang diterima dari user. */
+export interface CLIOptions {
+	sort?: SearchSortingQuery;
+	export?: 'csv' | 'json';
+}

@@ -7,6 +7,25 @@ import stripAnsi from 'strip-ansi';
 import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants';
 import type { Option, SearchResult, SupportCard, SupportData } from './types';
 
+/**
+ * Mencetak pesan dalam kotak persegi panjang.
+ *
+ * @param message - Pesan yang akan dicetak.
+ * @param color - Warna border (default: 'cyan').
+ * @returns Tidak mengembalikan nilai, hanya mencetak ke console.
+ */
+export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 'red' | 'yellow' = 'cyan') => {
+	const lines = message.split('\n');
+	const maxLen = Math.max(...lines.map((l) => stripAnsi(l).length));
+	const top = '┌' + '─'.repeat(maxLen + 4) + '┐';
+	const bottom = '└' + '─'.repeat(maxLen + 4) + '┘';
+	const middle = lines.map((l) => '│ ' + l + ' '.repeat(maxLen - stripAnsi(l).length) + ' │');
+
+	console.log(chalk[color](top));
+	middle.forEach((l) => console.log(chalk[color](l)));
+	console.log(chalk[color](bottom));
+};
+
 /** Pemetaan data trainee (horse). */
 export const traineeMap: Record<number, string> = Object.fromEntries(traineeOptions.map(({ value, name }) => [value, name]));
 
@@ -25,7 +44,9 @@ const supportCardMap: Record<number, SupportCard> = Object.fromEntries(supportCa
  */
 export const formatSupportCard = (data?: SupportData) => {
 	if (!data) return '-';
+
 	const c = supportCardMap[data.support_card_id];
+
 	if (!c) return `${data.support_card_id}`;
 
 	let formattedType;
@@ -145,6 +166,7 @@ export const exportData = (data: SearchResult[], format: 'csv' | 'json'): string
 		return filename;
 	} catch (error) {
 		console.error(`❌ Gagal mengekspor data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+
 		return null;
 	}
 };
