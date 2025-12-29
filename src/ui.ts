@@ -49,7 +49,7 @@ export const printTable = (data: SearchResult[]) => {
 		})),
 	});
 
-	console.log(`\n${output}`);
+	console.log(output);
 };
 
 /**

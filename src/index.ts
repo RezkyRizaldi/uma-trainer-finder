@@ -7,9 +7,9 @@ import ora from 'ora';
 
 import { fetchAllPages } from './api';
 import { traineeOptions } from './constants';
-import type { OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
+import type { CLIOptions, OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
 import { chooseOption, printTable } from './ui';
-import { exportData, getBaseName } from './utils';
+import { exportData, getBaseName, printBoxedMessage } from './utils';
 import pkg from '../package.json';
 
 /**
@@ -102,7 +102,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		});
 
 	program.parse();
-	const options = program.opts();
+	const options = program.opts<CLIOptions>();
 
 	if (options.sort) {
 		sortBy = options.sort;
@@ -113,7 +113,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 	while (true) {
 		const persistentRendererForSire = (): void => {
 			if (exportFeedback) {
-				console.log(exportFeedback);
+				printBoxedMessage(exportFeedback.trim(), 'green');
 				exportFeedback = null;
 			}
 		};
@@ -188,8 +188,6 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		while (consecutiveFails < 5) {
 			isLoading = true;
 
-			console.log('');
-
 			const spinner = ora(`Sedang mengambil data untuk ${chalk.yellowBright(sire.name) + grandInfo} di halaman ${pageStart} s/d ${pageStart + 19}...`).start();
 
 			let newData: SearchResult[];
@@ -202,14 +200,17 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			isLoading = false;
 
 			const trulyNewData = newData.filter((nd) => !data.some((d) => d.account_id === nd.account_id));
-			let statusMessage = `🔍 Hasil fetching data untuk ${chalk.yellowBright(sire.name) + grandInfo}\n`;
+			let statusMessage: string;
+			let color: 'cyan' | 'green' | 'red' | 'yellow';
 
 			if (trulyNewData.length > 0) {
 				data.push(...trulyNewData);
-				statusMessage += `\n✅ Ditemukan ${trulyNewData.length} data baru di halaman ${pageStart} s/d ${pageStart + 19}.`;
+				statusMessage = `✅ Ditemukan ${trulyNewData.length} data baru di halaman ${pageStart} s/d ${pageStart + 19}`;
+				color = 'green';
 				consecutiveFails = 0;
 			} else {
-				statusMessage += `\n⚠️ Tidak ditemukan data di halaman ${pageStart} s/d ${pageStart + 19}.`;
+				statusMessage = `⚠️ Tidak ditemukan data di halaman ${pageStart} s/d ${pageStart + 19}`;
+				color = 'yellow';
 				consecutiveFails++;
 			}
 
@@ -226,7 +227,13 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 			 * @returns Tidak mengembalikan apa pun; hanya mencetak ke `stdout`.
 			 */
 			const persistentRenderer = (): void => {
-				console.log(isLoading ? `⏳ Sedang mengambil data untuk ${sire.name + grandInfo} di halaman ${pageStart} ...` : statusMessage);
+				if (isLoading) {
+					console.log(`⏳ Sedang mengambil data untuk ${sire.name + grandInfo} di halaman ${pageStart} ...`);
+				} else {
+					console.log(`🔍 Hasil fetching data untuk ${chalk.yellowBright(sire.name) + grandInfo}\n`);
+					printBoxedMessage(statusMessage, color);
+					console.log('');
+				}
 
 				if (!isLoading && data.length > 0) {
 					printTable(data);
@@ -235,13 +242,15 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 			if (consecutiveFails >= 5) {
 				if (data.length === 0) {
-					console.log(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman.`);
+					printBoxedMessage(`❌ Tidak ada data ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah mencari 5 halaman`, 'red');
+					process.exit(0);
 				} else {
-					console.log(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan.`);
+					printBoxedMessage(`⚠️ Tidak ada data baru ditemukan untuk ${chalk.yellowBright(sire.name) + grandInfo} setelah 5 percobaan berturut-turut. Pencarian dihentikan`, 'yellow');
 
 					printTable(data);
 
 					await handleExportPrompt(data, options.export);
+					process.exit(0);
 				}
 				break;
 			}
@@ -252,7 +261,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 					{ name: '🔙 Kembali', value: 'reset', status: 'option' as const },
 					{ name: '🛑 Berhenti', value: 'stop', status: 'option' as const },
 				],
-				'\nCari di Halaman Berikutnya',
+				'Cari di Halaman Berikutnya',
 				true,
 				persistentRenderer,
 				false
