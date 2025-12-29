@@ -118,27 +118,31 @@ export const getBaseName = (name: string) => name.replace(/\s*\(.*?\)\s*/g, '').
  * @returns Tidak mengembalikan nilai, hanya menyimpan file dan mencetak pesan.
  */
 export const exportData = (data: SearchResult[], format: 'csv' | 'json'): void => {
-	const dir = path.join('exports', format);
+	try {
+		const dir = path.join('exports', format);
 
-	fs.mkdirSync(dir, { recursive: true });
+		fs.mkdirSync(dir, { recursive: true });
 
-	const now = new Date();
-	const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
-	const filename = path.join(dir, `uma-trainer-results-${timestamp}.${format}`);
+		const now = new Date();
+		const timestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}_${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}-${String(now.getSeconds()).padStart(2, '0')}`;
+		const filename = path.join(dir, `uma-trainer-results-${timestamp}.${format}`);
 
-	if (format === 'json') {
-		fs.writeFileSync(filename, JSON.stringify(data, null, 2));
-	} else {
-		const headers = 'Account ID,Trainer Name,Grandsire,Granddam,Support Card,Sparks\n';
-		const rows = data
-			.map(
-				(d) =>
-					`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${formatSupportCard(d.support_card)}","${formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])])}"`
-			)
-			.join('\n');
+		if (format === 'json') {
+			fs.writeFileSync(filename, JSON.stringify(data, null, 2));
+		} else {
+			const headers = 'Account ID,Trainer Name,Grandsire,Granddam,Support Card,Sparks\n';
+			const rows = data
+				.map(
+					(d) =>
+						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${formatSupportCard(d.support_card)}","${formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])])}"`
+				)
+				.join('\n');
 
-		fs.writeFileSync(filename, headers + rows);
+			fs.writeFileSync(filename, headers + rows);
+		}
+
+		console.log(`✅ Data diekspor ke ${filename}`);
+	} catch (error) {
+		console.error(`❌ Gagal mengekspor data: ${error instanceof Error ? error.message : 'Unknown error'}`);
 	}
-
-	console.log(`✅ Data diekspor ke ${filename}`);
 };
