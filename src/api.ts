@@ -28,7 +28,7 @@ export const fetchAllPages = async (sire: number, gSire: number | null = null, g
 
 				const response = await fetch(`https://uma.moe/api/v3/search?page=${page}&limit=12&search_type=inheritance&main_parent_id=${sire}&sort_by=${sortBy}&sort_order=desc&max_follower_num=1000`);
 
-				const data: ApiResponse = response.ok ? ((await response.json()) as ApiResponse) : { items: [], total: 0, page: 0, limit: 0, total_pages: 0 };
+				const data: ApiResponse = response.ok ? ((await response.json()) as ApiResponse) : { items: [], total: 0, page, limit: 0, total_pages: 0 };
 
 				cache.set(key, data);
 
