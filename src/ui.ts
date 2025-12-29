@@ -11,7 +11,8 @@ import { formatSpark, formatSupportCard, traineeMap } from './utils';
 let showUpcoming = false;
 
 /**
- * Mencetak hasil pencarian dalam bentuk tabel ke console.
+ * Mencetak hasil pencarian dalam bentuk tabel responsif ke console.
+ * Menggunakan lebar terminal untuk menyesuaikan kolom, dengan header berwarna dan data terpusat.
  *
  * Fungsi ini:
  * - Membuat header tabel dengan lebar kolom tetap.
@@ -20,7 +21,7 @@ let showUpcoming = false;
  * - Menggambar tabel dengan karakter box-drawing.
  * - Menampilkan tabel akhir ke console.
  *
- * @param data - Array hasil pencarian yang akan ditampilkan.
+ * @param data - Array hasil pencarian untuk ditampilkan.
  * @returns Tidak mengembalikan nilai, hanya mencetak tabel ke console.
  */
 export const printTable = (data: SearchResult[]) => {
@@ -53,7 +54,8 @@ export const printTable = (data: SearchResult[]) => {
 };
 
 /**
- * Membuka menu interaktif di terminal untuk memilih satu opsi.
+ * Menampilkan menu interaktif untuk memilih opsi menggunakan Inquirer.
+ * Mendukung navigasi keyboard, toggle upcoming, dan persistent rendering untuk status/tabel.
  *
  * Fungsi ini menampilkan daftar opsi, lalu menunggu input keyboard user:
  * - Panah ↑/↓ untuk navigasi antar opsi.
@@ -61,13 +63,13 @@ export const printTable = (data: SearchResult[]) => {
  * - Ctrl+C untuk keluar dari program.
  * - Huruf (A–Z) untuk lompat ke opsi pertama yang sesuai.
  *
- * @template T
- * @param opts 					 		 - Daftar opsi yang tersedia.
- * @param msg 							 - Pesan prompt yang ditampilkan ke user.
- * @param clearScreen 			 - Jika true, layar terminal dibersihkan setiap render.
- * @param persistentRenderer - Fungsi untuk menampilkan status proses dan tabel data.
- * @param withToggle  			 - Apakah menampilkan opsi toggle upcoming.
- * @returns Promise yang menyelesaikan dengan opsi yang dipilih user.
+ * @template T               - Tipe nilai opsi.
+ * @param opts 					 		 - Daftar opsi tersedia.
+ * @param msg 							 - Pesan prompt.
+ * @param clearScreen 			 - Bersihkan layar terminal setiap render (default true).
+ * @param persistentRenderer - Fungsi untuk render status/tabel tambahan.
+ * @param withToggle  			 - Tampilkan opsi toggle upcoming (default true).
+ * @returns Opsi yang dipilih user.
  */
 export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<OptionWithSpecial<T>> => {
 	while (true) {
@@ -75,7 +77,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		persistentRenderer?.();
 
 		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === 'option');
-		const list: OptionWithSpecial<T>[] = withToggle
+		const list = withToggle
 			? [
 					...baseOpts,
 					{
