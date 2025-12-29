@@ -31,6 +31,10 @@ export const fetchAllPages = async (sire: number, gSire: number | null = null, g
 
 				const res = await fetch(url);
 
+				if (!res.ok) {
+					console.error(`API request failed: ${res.status} ${res.statusText} for page ${page}`);
+				}
+
 				const data: ApiResponse = res.ok ? ((await res.json()) as ApiResponse) : { items: [], total: 0, page, limit: 0, total_pages: 0 };
 
 				cache.set(key, data);
@@ -46,13 +50,15 @@ export const fetchAllPages = async (sire: number, gSire: number | null = null, g
 
 				const { parent_left_id: l, parent_right_id: r } = inheritance;
 
-				if (gSire && gDam) return (l === gSire && r === gDam) || (l === gDam && r === gSire);
+				if (gSire !== null && gDam !== null) return (l === gSire && r === gDam) || (l === gDam && r === gSire);
 
-				if (gSire) return l === gSire || r === gSire;
+				if (gSire !== null) return l === gSire || r === gSire;
 
 				return true;
 			});
-	} catch {
+	} catch (error) {
+		console.error('Error fetching pages:', error);
+
 		return [];
 	}
 };
