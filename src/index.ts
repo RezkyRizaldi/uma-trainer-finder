@@ -7,7 +7,7 @@ import ora from 'ora';
 
 import { fetchAllPages } from './api';
 import { traineeOptions } from './constants';
-import type { CLIOptions, OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
+import type { CLIOptions, ExportType, OptionWithSpecial, SearchResult, SearchSortingQuery } from './types';
 import { chooseOption, printTable } from './ui';
 import { exportData, getBaseName, printBoxedMessage } from './utils';
 import pkg from '../package.json';
@@ -23,13 +23,13 @@ import pkg from '../package.json';
  * @param exportFormat - Format ekspor ('csv' atau 'json'), opsional.
  * @returns Promise dengan nama file yang dibuat jika sukses, atau `null` jika tidak ada data atau user membatalkan.
  */
-const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): Promise<string | null> => {
+const handleExportPrompt = async (data: SearchResult[], exportFormat?: ExportType): Promise<string | null> => {
 	if (data.length === 0) return null;
 
-	let format: 'csv' | 'json' | null = null;
+	let format: ExportType;
 
 	if (exportFormat) {
-		format = exportFormat as 'csv' | 'json';
+		format = exportFormat;
 	} else {
 		const { shouldExport } = await inquirer.prompt<{ shouldExport: boolean }>({
 			type: 'confirm',
@@ -40,7 +40,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 
 		if (!shouldExport) return null;
 
-		const { exportFormat } = await inquirer.prompt<{ exportFormat: 'csv' | 'json' }>({
+		const { exportFormat } = await inquirer.prompt<{ exportFormat: ExportType }>({
 			type: 'select',
 			name: 'exportFormat',
 			message: 'Pilih format ekspor:',
@@ -53,7 +53,7 @@ const handleExportPrompt = async (data: SearchResult[], exportFormat?: string): 
 		format = exportFormat;
 	}
 
-	return exportData(data, format!);
+	return exportData(data, format);
 };
 
 /**

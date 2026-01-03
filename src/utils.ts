@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import stripAnsi from 'strip-ansi';
 
 import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants';
-import type { Option, SearchResult, SupportCard, SupportData } from './types';
+import type { ExportType, Option, SearchResult, SupportCard, SupportData } from './types';
 
 /**
  * Mencetak pesan dalam kotak persegi panjang.
@@ -139,7 +139,7 @@ export const getBaseName = (name: string) => name.replace(/\s*\(.*?\)\s*/g, '').
  * @param format - Format file: 'csv' atau 'json'.
  * @returns Nama file yang dibuat jika sukses, atau `null` jika gagal/tdk dibuat.
  */
-export const exportData = (data: SearchResult[], format: 'csv' | 'json'): string | null => {
+export const exportData = (data: SearchResult[], format: ExportType): string | null => {
 	try {
 		const dir = path.join('exports', format);
 
