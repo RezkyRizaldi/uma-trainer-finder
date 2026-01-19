@@ -104,7 +104,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'King Halo (Evergreen Identity)', value: 106103, status: 'upcoming' },
 	{ name: 'King Halo (King of Emeralds)', value: 106101, status: 'released' },
 	{ name: 'King Halo (Noble White Cheer Attire)', value: 106102, status: 'upcoming' },
-	{ name: 'Kiseki (Miracle Author)', value: 113701, status: 'released' },
+	{ name: 'Kiseki (Miracle Author)', value: 113701, status: 'upcoming' },
 	{ name: 'Kitasan Black (Crowning Ooban)', value: 106801, status: 'upcoming' },
 	{ name: 'Kitasan Black (Final Bloom)', value: 106803, status: 'upcoming' },
 	{ name: 'Kitasan Black (Jubilant Star・Auspicious Crane)', value: 106802, status: 'upcoming' },
