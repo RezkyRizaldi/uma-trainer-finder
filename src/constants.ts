@@ -219,7 +219,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Taiki Shuttle (Bubblegum ☆ Memories)', value: 101002, status: 'upcoming' },
 	{ name: 'Taiki Shuttle (Wild Frontier)', value: 101001, status: 'released' },
 	{ name: 'Tamamo Cross (Ferocious Thunder)', value: 102102, status: 'upcoming' },
-	{ name: 'Tamamo Cross (With Lightning Speed)', value: 102101, status: 'upcoming' },
+	{ name: 'Tamamo Cross (Fast as Lightning)', value: 102101, status: 'released' },
 	{ name: 'Tanino Gimlet (Embodiment of Keravnos)', value: 108401, status: 'upcoming' },
 	{ name: 'Tanino Gimlet (With a Twist)', value: 108402, status: 'upcoming' },
 	{ name: 'Tap Dance City (GLITTER!)', value: 110701, status: 'upcoming' },
