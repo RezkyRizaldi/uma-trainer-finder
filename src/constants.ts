@@ -178,7 +178,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Sakura Bakushin O (Red-Hot Leader)', value: 104102, status: 'upcoming' },
 	{ name: 'Sakura Chitose O', value: 100000, status: 'unreleased' },
 	{ name: 'Sakura Chiyono O (Fleur Enneigée)', value: 106902, status: 'upcoming' },
-	{ name: 'Sakura Chiyono O (Hinoshita Kaisan・Hana Akari)', value: 106901, status: 'upcoming' },
+	{ name: 'Sakura Chiyono O (Strength in Full Bloom)', value: 106901, status: 'released' },
 	{ name: 'Sakura Laurel (Nouvelle Pousse)', value: 107602, status: 'upcoming' },
 	{ name: 'Sakura Laurel (Saisir le Rêve)', value: 107601, status: 'upcoming' },
 	{ name: 'Samson Big', value: 100000, status: 'unreleased' },
