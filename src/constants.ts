@@ -173,7 +173,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Rice Shower (Rosy Dreams)', value: 103001, status: 'released' },
 	{ name: 'Rice Shower (Vampire Makeover!)', value: 103002, status: 'released' },
 	{ name: 'Rice Shower (Yummy Dreamy Fairy)', value: 103003, status: 'upcoming' },
-	{ name: 'Royce and Royce', value: 100000, status: 'unreleased' },
+	{ name: 'Royce and Royce (Inspiring Genius)', value: 110301, status: 'upcoming' },
 	{ name: 'Sakura Bakushin O (Blossom in Learning)', value: 104101, status: 'released' },
 	{ name: 'Sakura Bakushin O (Red-Hot Leader)', value: 104102, status: 'upcoming' },
 	{ name: 'Sakura Chitose O', value: 100000, status: 'unreleased' },
