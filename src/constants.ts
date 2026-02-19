@@ -717,7 +717,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Tokai Teio (Tracen Academy)', value: 10003, rarity: 'R', type: 'Speed' },
 	{ name: 'Tosen Jordan', value: 30273, rarity: 'SSR', type: 'Power' },
 	{ name: 'Tosen Jordan', value: 20073, rarity: 'SR', type: 'Speed' },
-	{ name: 'Tosen Jordan (In My Way)', value: 30084, rarity: 'SSR', type: 'Speed' },
+	{ name: 'Tosen Jordan (My Way)', value: 30084, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Tosen Jordan (Tracen Academy)', value: 10070, rarity: 'R', type: 'Stamina' },
 	{ name: 'Tosen Jordan (Turf as Nails)', value: 20035, rarity: 'SR', type: 'Stamina' },
 	{ name: 'Transcend', value: 30249, rarity: 'SSR', type: 'Power' },
