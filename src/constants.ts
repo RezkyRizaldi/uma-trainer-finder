@@ -4,7 +4,7 @@ import type { Option, SupportCard } from './types';
 export const traineeOptions: Option<number>[] = [
 	{ name: 'Admire Groove', value: 100000, status: 'unreleased' },
 	{ name: 'Admire Vega (Glacialis Vega)', value: 103302, status: 'upcoming' },
-	{ name: 'Admire Vega (Starry Nocturne)', value: 103301, status: 'upcoming' },
+	{ name: 'Admire Vega (Starry Nocturne)', value: 103301, status: 'released' },
 	{ name: 'Agnes Digital (Agnes♡Jiangshi)', value: 101902, status: 'upcoming' },
 	{ name: 'Agnes Digital (Full-Color Fangirling)', value: 101901, status: 'released' },
 	{ name: 'Agnes Tachyon (Lunatic Lab)', value: 103202, status: 'upcoming' },
