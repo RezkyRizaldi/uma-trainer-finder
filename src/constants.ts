@@ -523,7 +523,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Mejiro Ardan (My Heart Will Go On)', value: 20034, rarity: 'SR', type: 'Wit' },
 	{ name: 'Mejiro Ardan (Tracen Academy)', value: 10069, rarity: 'R', type: 'Wit' },
 	{ name: 'Mejiro Bright', value: 30244, rarity: 'SSR', type: 'Stamina' },
-	{ name: 'Mejiro Bright', value: 30087, rarity: 'SSR', type: 'Stamina' },
+	{ name: 'Mejiro Bright (Little by Little)', value: 30087, rarity: 'SSR', type: 'Stamina' },
 	{ name: 'Mejiro Bright (Tracen Academy)', value: 10076, rarity: 'R', type: 'Stamina' },
 	{ name: 'Mejiro Dober', value: 30174, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Mejiro Dober', value: 20093, rarity: 'SR', type: 'Speed' },
