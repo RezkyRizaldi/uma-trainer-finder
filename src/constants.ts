@@ -133,7 +133,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Meisho Doto (Turbulent Blue)', value: 105801, status: 'released' },
 	{ name: 'Mejiro Ardan (Crystalline)', value: 107101, status: 'released' },
 	{ name: 'Mejiro Ardan (Neige Émeraude)', value: 107102, status: 'upcoming' },
-	{ name: 'Mejiro Bright (Brunissage Line)', value: 107401, status: 'upcoming' },
+	{ name: 'Mejiro Bright (Brunissage Line)', value: 107401, status: 'released' },
 	{ name: 'Mejiro Bright (Starry Snow Lolita)', value: 107402, status: 'upcoming' },
 	{ name: 'Mejiro Dober (Off the Line)', value: 105901, status: 'released' },
 	{ name: 'Mejiro Dober (Vacances Saphir)', value: 105902, status: 'upcoming' },
