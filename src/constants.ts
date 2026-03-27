@@ -723,7 +723,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Tap Dance City', value: 10095, rarity: 'R', type: 'Power' },
 	{ name: 'Tazuna Hayakawa (Tracen Academy)', value: 10021, rarity: 'R', type: 'Pal' },
 	{ name: 'Tazuna Hayakawa (Tracen Reception)', value: 30021, rarity: 'SSR', type: 'Pal' },
-	{ name: 'Team Sirius', value: 30081, rarity: 'SSR', type: 'Group' },
+	{ name: 'Team Sirius (Passing the Dream On)', value: 30081, rarity: 'SSR', type: 'Group' },
 	{ name: "The Throne's Assemblage", value: 30067, rarity: 'SSR', type: 'Group' },
 	{ name: 'Tokai Teio', value: 30275, rarity: 'SSR', type: 'Speed' },
 	{ name: 'Tokai Teio', value: 30213, rarity: 'SSR', type: 'Speed' },
