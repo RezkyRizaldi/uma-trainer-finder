@@ -670,7 +670,7 @@ export const supportCardOptions: SupportCard[] = [
 	{ name: 'Sirius Symboli (The Brightest Star Shines On)', value: 20038, rarity: 'SR', type: 'Guts' },
 	{ name: 'Sirius Symboli (Tracen Academy)', value: 10071, rarity: 'R', type: 'Guts' },
 	{ name: 'Smart Falcon', value: 30210, rarity: 'SSR', type: 'Speed' },
-	{ name: 'Smart Falcon', value: 20045, rarity: 'SR', type: 'Power' },
+	{ name: 'Smart Falcon (Almost... an Umadol!? ♡)', value: 20045, rarity: 'SR', type: 'Guts' },
 	{ name: 'Smart Falcon (My Umadol Way! ☆)', value: 30017, rarity: 'SSR', type: 'Power' },
 	{ name: 'Smart Falcon (Tracen Academy)', value: 10039, rarity: 'R', type: 'Power' },
 	{ name: 'Sounds of Earth', value: 30191, rarity: 'SSR', type: 'Guts' },
