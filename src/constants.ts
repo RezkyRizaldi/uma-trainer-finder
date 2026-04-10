@@ -113,7 +113,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Logotype', value: 100000, status: 'unreleased' },
 	{ name: 'Loves Only You (9927 Wishes)', value: 113201, status: 'upcoming' },
 	{ name: 'Loves Only You (Love-Linked Aster)', value: 113202, status: 'upcoming' },
-	{ name: 'Lucky Lilac', value: 100000, status: 'unreleased' },
+	{ name: 'Lucky Lilac (万折不撓の纏)', value: 113001, status: 'upcoming' },
 	{ name: 'Manhattan Cafe (Creeping Shadow)', value: 102501, status: 'released' },
 	{ name: 'Manhattan Cafe (Willow-Green Evening)', value: 102502, status: 'upcoming' },
 	{ name: 'Marche Lorraine', value: 100000, status: 'unreleased' },
