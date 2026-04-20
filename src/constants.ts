@@ -2,7 +2,7 @@ import type { Option, SupportCard } from './types';
 
 /** Data trainee (horse) yang bisa dipilih user. */
 export const traineeOptions: Option<number>[] = [
-	{ name: 'Admire Groove', value: 100000, status: 'unreleased' },
+	{ name: 'Admire Groove (Glacial Queen)', value: 111801, status: 'upcoming' },
 	{ name: 'Admire Vega (Glacialis Vega)', value: 103302, status: 'upcoming' },
 	{ name: 'Admire Vega (Starry Nocturne)', value: 103301, status: 'released' },
 	{ name: 'Agnes Digital (Agnes♡Jiangshi)', value: 101902, status: 'upcoming' },
@@ -257,7 +257,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Winning Ticket (Glorious Coat)', value: 103503, status: 'released' },
 	{ name: 'Wonder Acute (Butterfly Sting)', value: 110001, status: 'upcoming' },
 	{ name: 'Wonder Acute (柔灯・湯の香の装い)', value: 110002, status: 'upcoming' },
-	{ name: 'Yaeno Muteki (Attack of the Four White Meteors)', value: 107201, status: 'upcoming' },
+	{ name: 'Yaeno Muteki (Blazed Head, Covered Fists)', value: 107201, status: 'released' },
 	{ name: 'Yaeno Muteki (Black General, Zen)', value: 107202, status: 'upcoming' },
 	{ name: 'Yamanin Zephyr (Fluttertail Spirit)', value: 107801, status: 'upcoming' },
 	{ name: 'Yamanin Zephyr (Sugary Wind)', value: 107802, status: 'upcoming' },
