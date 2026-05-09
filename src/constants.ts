@@ -142,7 +142,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Mejiro Mcqueen (End of the Skies)', value: 101302, status: 'released' },
 	{ name: 'Mejiro Mcqueen (Fair Lady of the Waves)', value: 101303, status: 'upcoming' },
 	{ name: 'Mejiro Mcqueen (Frontline Elegance)', value: 101301, status: 'released' },
-	{ name: 'Mejiro Palmer (Line Breakthrough)', value: 106401, status: 'upcoming' },
+	{ name: 'Mejiro Palmer (Line Breakthrough)', value: 106401, status: 'released' },
 	{ name: 'Mejiro Palmer (Warm-Hearted Reindeer)', value: 106402, status: 'upcoming' },
 	{ name: 'Mejiro Ramonu (Onyx Line)', value: 108601, status: 'upcoming' },
 	{ name: 'Mejiro Ramonu (Untouchable Eden)', value: 108602, status: 'upcoming' },
