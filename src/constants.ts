@@ -175,7 +175,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Oguri Cap (Cinderella Gray)', value: 100603, status: 'upcoming' },
 	{ name: 'Oguri Cap (Starlight Beat)', value: 100601, status: 'released' },
 	{ name: 'Orfevre (Total Dominion)', value: 111501, status: 'upcoming' },
-	{ name: 'Red Desire', value: 100000, status: 'unreleased' },
+	{ name: 'Red Desire (Divine Raiment)', value: 113601, status: 'upcoming' },
 	{ name: 'Rhein Kraft (Dream Successor)', value: 110901, status: 'upcoming' },
 	{ name: 'Rhein Kraft (Eternal Fairytale)', value: 110902, status: 'upcoming' },
 	{ name: 'Rice Shower (Rosy Dreams)', value: 103001, status: 'released' },
