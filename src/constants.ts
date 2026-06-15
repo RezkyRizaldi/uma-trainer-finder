@@ -37,7 +37,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Chrono Genesis (Prismatic Curator)', value: 113301, status: 'upcoming' },
 	{ name: 'Copano Rickey (Dazzling ☆ Lucky Wear)', value: 109802, status: 'upcoming' },
 	{ name: 'Copano Rickey (Yin-yang Bagua ☆ Lucky Costume)', value: 109801, status: 'upcoming' },
-	{ name: "Curren Bouquetd'or", value: 100000, status: 'unreleased' },
+	{ name: "Curren Bouquetd'or (花宿しのクチュール)", value: 113401, status: 'upcoming' },
 	{ name: 'Curren Chan (Fille Éclair)', value: 103801, status: 'released' },
 	{ name: 'Curren Chan (Ma Chérie of the New Moon)', value: 103802, status: 'released' },
 	{ name: 'Daiichi Ruby (Brilliant Red Gemstone)', value: 108501, status: 'upcoming' },
