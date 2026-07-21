@@ -187,7 +187,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Rice Shower (Yummy Dreamy Fairy)', value: 103003, status: 'upcoming' },
 	{ name: 'Rose Kingdom', value: 100000, status: 'unreleased' },
 	{ name: 'Royce and Royce (Inspiring Genius)', value: 110301, status: 'upcoming' },
-	{ name: 'Rulership', value: 100000, status: 'unreleased' },
+	{ name: 'Rulership (Monochrome GM)', value: 114501, status: 'upcoming' },
 	{ name: 'Sakura Bakushin O (Blossom in Learning)', value: 104101, status: 'released' },
 	{ name: 'Sakura Bakushin O (Red-Hot Leader)', value: 104102, status: 'upcoming' },
 	{ name: 'Sakura Bakushin O (雷の韋駄天)', value: 104103, status: 'upcoming' },
