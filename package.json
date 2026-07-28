@@ -30,11 +30,11 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@types/inquirer": "^9.0.10",
-		"@types/node": "^26.1.1",
+		"@types/node": "^26.1.2",
 		"eslint": "^10.8.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.6",
-		"globals": "^17.7.0",
+		"globals": "^17.8.0",
 		"jiti": "^2.7.0",
 		"prettier": "^3.9.6",
 		"ts-node": "^10.9.2",
@@ -43,7 +43,7 @@
 		"typescript-eslint": "^8.65.0"
 	},
 	"dependencies": {
-		"chalk": "^5.6.2",
+		"chalk": "^6.0.0",
 		"commander": "^15.0.0",
 		"inquirer": "^14.0.2",
 		"ora": "^9.4.1",
