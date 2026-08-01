@@ -40,7 +40,7 @@ export const printTable = (data: SearchResult[]) => {
 			traineeMap[d.inheritance?.parent_right_id ?? -1] ?? d.inheritance?.parent_right_id?.toString() ?? '-',
 			formatSupportCard(d.support_card),
 			formatSpark([...(d.inheritance?.blue_sparks ?? []), ...(d.inheritance?.pink_sparks ?? []), ...(d.inheritance?.green_sparks ?? []), ...(d.inheritance?.white_sparks ?? [])]),
-			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nWins: ${d.inheritance?.win_count ?? '-'}\nSparks: ${d.inheritance?.white_count ?? '-'}\nRank: ${rank ?? '-'} (${rankLabel})`,
+			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nGI Wins: ${d.inheritance?.win_count ?? '-'}\nWhite Skills: ${d.inheritance?.white_count ?? '-'}\nRank: ${rankLabel} (${rank ?? '-'})`,
 		];
 	});
 

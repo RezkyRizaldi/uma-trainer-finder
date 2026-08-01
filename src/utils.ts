@@ -272,7 +272,7 @@ export const getRankLabel = (score: number): string => {
  *
  * @param data - Array data hasil pencarian.
  * @param format - Format file: 'csv' atau 'json'.
- * @returns Nama file yang dibuat jika sukses, atau `null` jika gagal/tdk dibuat.
+ * @returns Nama file yang dibuat jika sukses, atau `null` jika gagal/tidak dibuat.
  */
 export const exportData = (data: SearchResult[], format: ExportType): string | null => {
 	try {
@@ -287,12 +287,14 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 		if (format === 'json') {
 			fs.writeFileSync(filename, JSON.stringify(data, null, 2));
 		} else {
-			const headers = 'Account ID,Trainer Name,Grandsire,Granddam,Support Card,Sparks\n';
+			const headers = 'Account,Parent,Grandsire,Granddam,Support Card,Sparks,Info\n';
 			const rows = data
-				.map(
-					(d) =>
-						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${stripAnsi(formatSupportCard(d.support_card))}","${stripAnsi(formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]))}"`,
-				)
+				.map((d) => {
+					const rank = d.inheritance?.parent_rank;
+					const rankLabel = rank != null ? getRankLabel(rank) : '-';
+
+					return `"${d.trainer_name} (${d.account_id})","${traineeMap[d.inheritance?.main_parent_id ?? -1] ?? d.inheritance?.main_parent_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${stripAnsi(formatSupportCard(d.support_card))}","${stripAnsi(formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]))}","Affinity: ${d.inheritance?.affinity_score ?? '-'}\nGI Wins: ${d.inheritance?.win_count ?? '-'}\nWhite Skills: ${d.inheritance?.white_count ?? '-'}\nRank: ${rankLabel} (${rank ?? '-'})"`;
+				})
 				.join('\n');
 
 			fs.writeFileSync(filename, headers + rows);
