@@ -205,7 +205,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Satono Diamond (Natural Brilliance)', value: 106701, status: 'released' },
 	{ name: 'Seeking The Pearl (Be♪Witched)', value: 104202, status: 'upcoming' },
 	{ name: 'Seeking The Pearl (Rocket ☆ Star)', value: 104201, status: 'upcoming' },
-	{ name: 'Seiun Sky (渚のきまぐれオランジュ)', value: 102003, status: 'released' },
+	{ name: 'Seiun Sky (渚のきまぐれオランジュ)', value: 102003, status: 'upcoming' },
 	{ name: 'Seiun Sky (Reeling in the Big One)', value: 102001, status: 'released' },
 	{ name: 'Seiun Sky (Soirée des Chatons)', value: 102002, status: 'released' },
 	{ name: 'Shinko Windy (Wicked Punk)', value: 104301, status: 'upcoming' },
