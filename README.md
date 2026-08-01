@@ -1,8 +1,8 @@
 # 🐴 Uma Trainer Finder
 
-> **CLI sederhana untuk mencari dan mengurutkan data inheritance di game _Umamusume: Pretty Derby_.**
+> **CLI interaktif untuk mencari data inheritance trainer di game _Umamusume: Pretty Derby_.**
 
-Uma Trainer Finder dibuat supaya kamu bisa dengan mudah melihat bahkan menyimpan urutan pelatih berdasarkan rank, skor afinitas, kemenangan G1, white sparks, atau data terbaru — tanpa repot cari manual.
+Uma Trainer Finder memudahkan kamu menemukan trainer terbaik berdasarkan rank, skor afinitas, kemenangan G1, white sparks, atau data terbaru — lengkap dengan tampilan tabel, navigasi halaman, dan ekspor hasil ke CSV atau JSON.
 
 ---
 
@@ -21,54 +21,120 @@ cd uma-trainer-finder
 npm install
 ```
 
-### 3. Build Program
+### 3. Konfigurasi API Key
+
+Buat file `.env` di root proyek:
+
+```env
+UMA_MOE_API_KEY=your_api_key_here
+```
+
+### 4. Build Program
 
 ```bash
 npm run build
 ```
 
-### 4. Link CLI ke Sistem
+### 5. Link CLI ke Sistem (Opsional)
 
 ```bash
 npm run link-cli
 ```
 
-> Setelah itu, kamu bisa langsung pakai perintah `uma-cli` di terminal tanpa perlu masuk ke folder proyek.
+> Setelah di-link, kamu bisa pakai perintah `uma-cli` dari mana saja di terminal.
 
-### 5. Jalankan Program
+### 6. Jalankan Program
 
 ```bash
-uma-cli [option]
+# Jika sudah di-link:
+uma-cli [options]
+
+# Atau langsung via npm:
+npm start
 ```
 
-#### 🔧 Opsi yang Tersedia
+---
 
-| Opsi              | Fungsi                                     |
-| ----------------- | ------------------------------------------ |
-| `--sort=rank`     | Urut berdasarkan parent rank (**default**) |
-| `--sort=affinity` | Urut berdasarkan skor affinitas            |
-| `--sort=win`      | Urut berdasarkan jumlah kemenangan G1      |
-| `--sort=sparks`   | Urut berdasarkan jumlah white sparks       |
-| `--sort=latest`   | Urut berdasarkan data terbaru              |
-| `--export=csv`    | Ekspor hasil pencarian dalam format CSV    |
-| `--export=json`   | Ekspor hasil pencarian dalam format JSON   |
-| `--help`, `-h`    | Menampilkan panduan penggunaan             |
-| `--version`, `-v` | Menampilkan versi program                  |
+## ⚙️ Opsi CLI
 
-## ⚠️ Catatan Penting
+| Opsi                    | Deskripsi                                   |
+| ----------------------- | ------------------------------------------- |
+| `-s, --sort <type>`     | Metode pengurutan hasil pencarian           |
+| `-e, --export <format>` | Langsung ekspor hasil ke file saat berhenti |
+| `-h, --help`            | Tampilkan panduan penggunaan                |
+| `-V, --version`         | Tampilkan versi program                     |
 
-- Jika kamu masih pakai **Node.js versi < 18**, tambahkan `node-fetch` secara manual:
+### Nilai `--sort`
 
-  ```bash
-  npm install node-fetch
-  ```
+| Nilai      | Diurutkan berdasarkan       |
+| ---------- | --------------------------- |
+| `affinity` | Skor afinitas (**default**) |
+| `rank`     | Parent rank                 |
+| `trending` | Popularitas (trending)      |
+| `win`      | Jumlah kemenangan G1        |
+| `sparks`   | Jumlah white sparks         |
+| `blue`     | Total bintang blue sparks   |
+| `pink`     | Total bintang pink sparks   |
+| `green`    | Total bintang green sparks  |
+| `white`    | Total bintang white sparks  |
+| `latest`   | Data terbaru diperbarui     |
 
-  dan di `src/api.ts` tambahkan:
+### Nilai `--export`
 
-  ```ts
-  import 'node-fetch';
-  ```
+| Nilai  | Format file            |
+| ------ | ---------------------- |
+| `csv`  | Comma-Separated Values |
+| `json` | JSON terformat         |
 
-- Untuk **Node.js versi 18 ke atas**, `fetch` sudah tersedia secara bawaan.
+**Contoh penggunaan:**
 
-- Kalau kamu mengubah kode, cukup jalankan lagi `npm run link-cli` untuk memperbarui link CLI-nya.
+```bash
+uma-cli --sort=affinity --export=csv
+```
+
+---
+
+## 🖥️ Alur Program
+
+````text
+1. Pilih Target Trainee
+   ├─ Gunakan ↑/↓ lalu Enter untuk memilih
+   ├─ Opsi "👁️ Tampilkan karakter yang akan datang" → tampilkan karakter Upcoming/Unreleased (tidak bisa dipilih sebagai target)
+   └─ Opsi "🛑 Berhenti" → keluar dari program
+
+2. Program mengambil data dari API (1 halaman per tindakan)
+   └─ Spinner ditampilkan selama proses fetch
+
+3. Tabel hasil ditampilkan
+   Kolom: #, Account ID, Account Name, Grandsire, Granddam, Support Card, Sparks
+
+4. Pilih Aksi
+   ├─ "➡️ Lanjut ke Halaman Berikutnya" → fetch halaman berikutnya & perbarui tabel
+   ├─ "💾 Ekspor Hasil" → simpan data saat ini ke CSV atau JSON, lalu lanjut
+   ├─ "🔙 Kembali ke Pemilihan Trainee" → kembali ke langkah 1 (menawarkan ekspor dulu)
+   └─ "🛑 Berhenti" → keluar (menawarkan ekspor dulu)
+```text
+
+> Program berhenti **otomatis** jika terjadi 5 kegagalan fetch berturut-turut.
+
+---
+
+## 📂 Hasil Ekspor
+
+File ekspor disimpan di folder `exports/` dalam direktori kerja saat program dijalankan:
+
+```text
+exports/
+├── csv/
+│   └── uma-trainer-results-YYYY-MM-DD_HH-MM-SS.csv
+└── json/
+   └── uma-trainer-results-YYYY-MM-DD_HH-MM-SS.json
+````
+
+---
+
+## ⚠️ Catatan
+
+- Membutuhkan **Node.js v18+**.
+- API key bisa didapatkan dengan cara membuat akun di [uma.moe](https://uma.moe) lalu ambil di halaman settings.
+- Setelah mengubah kode sumber, jalankan `npm run build` lalu `npm run link-cli` untuk memperbarui binary CLI.

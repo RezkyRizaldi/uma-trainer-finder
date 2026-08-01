@@ -1,13 +1,11 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import stripAnsi from 'strip-ansi';
 import { getBorderCharacters, table } from 'table';
 
-import type { OptionWithSpecial, SearchResult } from './types';
-import { formatSpark, formatSupportCard, traineeMap } from './utils';
+import type { Option, SearchResult } from './types';
+import { formatSpark, formatSupportCard, getRankLabel, traineeMap } from './utils';
 
-/**
- * State untuk toggle tampilan karakter upcoming.
- */
 let showUpcoming = false;
 
 /**
@@ -25,32 +23,57 @@ let showUpcoming = false;
  * @returns Tidak mengembalikan nilai, hanya mencetak tabel ke console.
  */
 export const printTable = (data: SearchResult[]) => {
-	const headers = ['#', 'Account ID', 'Account Name', 'Grandsire', 'Granddam', 'Support Card', 'Sparks'].map((h) => chalk.cyan.bold(h));
-	const maxW = [6, 12, 15, 25, 25, 35, 70];
+	const maxW = [4, 23, 27, 27, 27, 32, 100, 28];
+	const headers = ['#', 'Account', 'Parent', 'Grandsire', 'Granddam', 'Support Card', 'Sparks', 'Info'].map((h) => chalk.cyan.bold(h));
 	const totalDefault = maxW.reduce((a, b) => a + b, 0) + headers.length * 3 + 1;
 	const termWidth = process.stdout.columns ?? totalDefault;
 
-	const rows = data.map((d, i) => [
-		`${i + 1}.`,
-		d.account_id,
-		d.trainer_name,
-		traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-',
-		traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-',
-		formatSupportCard(d.support_card),
-		formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]),
-	]);
+	const rows = data.map((d, i) => {
+		const rank = d.inheritance?.parent_rank;
+		const rankLabel = rank != null ? getRankLabel(rank) : '-';
+
+		return [
+			`${i + 1}.`,
+			`${d.trainer_name}\n${d.account_id}`,
+			traineeMap[d.inheritance?.main_parent_id ?? -1] ?? d.inheritance?.main_parent_id?.toString() ?? '-',
+			traineeMap[d.inheritance?.parent_left_id ?? -1] ?? d.inheritance?.parent_left_id?.toString() ?? '-',
+			traineeMap[d.inheritance?.parent_right_id ?? -1] ?? d.inheritance?.parent_right_id?.toString() ?? '-',
+			formatSupportCard(d.support_card),
+			formatSpark([...(d.inheritance?.blue_sparks ?? []), ...(d.inheritance?.pink_sparks ?? []), ...(d.inheritance?.green_sparks ?? []), ...(d.inheritance?.white_sparks ?? [])]),
+			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nWins: ${d.inheritance?.win_count ?? '-'}\nSparks: ${d.inheritance?.white_count ?? '-'}\nRank: ${rank ?? '-'} (${rankLabel})`,
+		];
+	});
 
 	const output = table([headers, ...rows], {
 		border: getBorderCharacters('honeywell'),
 		columns: maxW.map((w) => ({
 			alignment: 'center',
 			verticalAlignment: 'middle',
-			width: Math.max(8, Math.floor(w * Math.min(1, termWidth / totalDefault))),
+			width: Math.max(6, Math.floor(w * Math.min(1, termWidth / totalDefault))),
 			wrapWord: true,
 		})),
 	});
 
 	console.log(output);
+};
+
+/**
+ * Mencetak pesan dalam kotak persegi panjang.
+ *
+ * @param message - Pesan yang akan dicetak.
+ * @param color - Warna border (default: 'cyan').
+ * @returns Tidak mengembalikan nilai, hanya mencetak ke console.
+ */
+export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 'red' | 'yellow' = 'cyan') => {
+	const lines = message.split('\n');
+	const maxLen = Math.max(...lines.map((l) => stripAnsi(l).length));
+	const top = '┌' + '─'.repeat(maxLen + 4) + '┐';
+	const bottom = '└' + '─'.repeat(maxLen + 4) + '┘';
+	const middle = lines.map((l) => '│ ' + l + ' '.repeat(maxLen - stripAnsi(l).length) + ' │');
+
+	console.log(chalk[color](top));
+	middle.forEach((l) => console.log(chalk[color](l)));
+	console.log(chalk[color](bottom));
 };
 
 /**
@@ -71,19 +94,19 @@ export const printTable = (data: SearchResult[]) => {
  * @param withToggle  			 - Tampilkan opsi toggle upcoming (default true).
  * @returns Opsi yang dipilih user.
  */
-export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<OptionWithSpecial<T>> => {
+export const chooseOption = async <T>(opts: Option<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<Option<T>> => {
 	while (true) {
 		if (clearScreen) process.stdout.write('\x1bc');
+
 		persistentRenderer?.();
 
-		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === 'option');
+		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === undefined);
 		const list = withToggle
 			? [
 					...baseOpts,
 					{
 						name: showUpcoming ? '🚫 Sembunyikan karakter yang akan datang' : '👁️ Tampilkan karakter yang akan datang',
-						value: '__toggleUpcoming',
-						status: 'option',
+						value: '__toggleUpcoming' as unknown as T,
 					},
 				]
 			: baseOpts;
@@ -97,7 +120,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex]?.value : undefined;
 
 		try {
-			const { chosen } = (await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>([
+			const { chosen } = (await inquirer.prompt<{ chosen: Option<T> }>([
 				{
 					type: 'select',
 					name: 'chosen',
@@ -107,7 +130,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 					pageSize: 20,
 					default: defaultValue,
 				},
-			])) as { chosen: OptionWithSpecial<T> };
+			])) as { chosen: Option<T> };
 
 			if (chosen.value === '__toggleUpcoming') {
 				showUpcoming = !showUpcoming;

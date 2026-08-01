@@ -4,7 +4,7 @@ export interface ApiResponse {
 	items?: SearchResult[];
 
 	/** total data. */
-	total: number;
+	total: string; // numeric string
 
 	/** nomor halaman yang aktif saat ini. */
 	page: number;
@@ -16,21 +16,43 @@ export interface ApiResponse {
 	total_pages: number;
 }
 
+/**
+ * Skema error dari API uma.moe (#/components/schemas/Error).
+ *
+ * `error` dan `status` selalu ada; `details` bersifat opsional.
+ */
+export interface ApiError {
+	/** Pesan error singkat. */
+	error: string;
+
+	/** HTTP status code. */
+	status: number;
+
+	/** Detail tambahan (opsional). */
+	details?: string;
+}
+
 /** Struktur data hasil pencarian API. */
 export interface SearchResult {
 	/** ID akun trainer. */
-	account_id: string;
+	account_id: string; // numeric string
 
 	/** Nama akun trainer. */
 	trainer_name: string;
 
 	/** Jumlah follower akun trainer. */
-	follower_num: number;
+	follower_num: number | null;
+
+	borrow_view_count: number; // int64
+
+	borrow_copy_count: number; // int64
+
+	last_updated: string | null; // date-time
 
 	/** Informasi grandsire dan granddam (opsional). */
 	inheritance?: InheritanceData;
 
-	/** nformasi kartu support (opsional). */
+	/** Informasi kartu support (opsional). */
 	support_card?: SupportData;
 }
 
@@ -40,7 +62,7 @@ export interface InheritanceData {
 	inheritance_id: number;
 
 	/** ID akun trainer. */
-	account_id: number;
+	account_id: string; // numeric string
 
 	/** ID sire. */
 	main_parent_id: number;
@@ -69,9 +91,6 @@ export interface InheritanceData {
 	/** Daftar white spark (skill). */
 	white_sparks: number[];
 
-	/** Jumlah nilai afinitas. */
-	affinity_score: number;
-
 	/** Jumlah kemenangan balapan G1. */
 	win_count: number;
 
@@ -79,53 +98,55 @@ export interface InheritanceData {
 	white_count: number;
 
 	/** Blue spark (stats) utama. */
-	main_blue_factors: number[];
+	main_blue_factors: number;
 
 	/** Pink spark (aptitude) utama. */
-	main_pink_factors: number[];
+	main_pink_factors: number;
 
 	/** Green spark (unique skill) utama. */
-	main_green_factors: number[];
+	main_green_factors: number;
 
 	/** white spark (skill) utama. */
 	main_white_factors: number[];
 
 	/** Jumlah white spark (skill) utama. */
 	main_white_count: number;
+
+	/** Jumlah nilai afinitas. */
+	affinity_score: number | null;
 }
 
 /** Struktur support data dari API (dalam hasil search). */
 export interface SupportData {
 	/** ID akun trainer. */
-	account_id: number;
+	account_id: string;
 
 	/** ID support card. */
 	support_card_id: number;
 
 	/** Level limit break. */
-	limit_break_count: number;
+	limit_break_count: number | null;
 
 	/** Jumlah exp support card. */
 	experience: number;
 }
 
-/** Struktur pilihan khusus untuk menu navigasi. */
-export type SpecialValue = 'skip' | 'next' | 'stop' | '__toggleUpcoming' | null;
-
-/** Representasi generic option (untuk menu pilihan interaktif). */
+/**
+ * Representasi generic option untuk menu pilihan interaktif.
+ *
+ * `status` hanya diisi untuk data trainee dari `constants.ts`.
+ * Item navigasi (aksi menu) tidak mengisi `status` sehingga nilainya `undefined`.
+ */
 export interface Option<T> {
-	/** Nama data yang ditampilkan ke user. */
+	/** Nama yang ditampilkan ke user. */
 	name: string;
 
-	/** ID option. */
+	/** Nilai yang dikembalikan saat opsi dipilih. */
 	value: T;
 
-	/** Status ketersediaan dari data (opsional). */
-	status?: 'released' | 'upcoming' | 'unreleased' | 'option';
+	/** Status ketersediaan karakter; tidak diisi untuk item navigasi. */
+	status?: 'released' | 'upcoming' | 'unreleased';
 }
-
-/** Struktur pilihan biasa + pilihan khusus untuk menu navigasi. */
-export type OptionWithSpecial<T> = Option<T | SpecialValue>;
 
 /** Tingkat kelangkaan kartu support. */
 export type SupportCardRarity = 'SSR' | 'SR' | 'R';
@@ -149,9 +170,12 @@ export interface SupportCard {
 }
 
 /** Struktur query untuk menyortir urutan data hasil pencarian. */
-export type SearchSortingQuery = 'parent_rank' | 'affinity_score' | 'win_count' | 'white_count' | 'last_updated';
+export type SearchSortingQuery = 'trending' | 'affinity_score' | 'win_count' | 'white_count' | 'blue_stars_sum' | 'pink_stars_sum' | 'green_stars_sum' | 'white_stars_sum' | 'parent_rank' | 'last_updated';
 
-/** Tipe export data  */
+/** Struktur query untuk menyortir tipe data hasil pencarian. */
+export type SearchTypeQuery = 'inheritance' | 'support_cards' | 'all';
+
+/** Tipe export data */
 export type ExportType = 'csv' | 'json';
 
 /** Struktur opsi CLI yang diterima dari user. */

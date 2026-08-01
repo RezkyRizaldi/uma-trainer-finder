@@ -7,25 +7,6 @@ import stripAnsi from 'strip-ansi';
 import { blueSparkOptions, greenSparkOptions, pinkSparkOptions, supportCardOptions, traineeOptions, whiteSparkOptions } from './constants';
 import type { ExportType, Option, SearchResult, SupportCard, SupportData } from './types';
 
-/**
- * Mencetak pesan dalam kotak persegi panjang.
- *
- * @param message - Pesan yang akan dicetak.
- * @param color - Warna border (default: 'cyan').
- * @returns Tidak mengembalikan nilai, hanya mencetak ke console.
- */
-export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 'red' | 'yellow' = 'cyan') => {
-	const lines = message.split('\n');
-	const maxLen = Math.max(...lines.map((l) => stripAnsi(l).length));
-	const top = '┌' + '─'.repeat(maxLen + 4) + '┐';
-	const bottom = '└' + '─'.repeat(maxLen + 4) + '┘';
-	const middle = lines.map((l) => '│ ' + l + ' '.repeat(maxLen - stripAnsi(l).length) + ' │');
-
-	console.log(chalk[color](top));
-	middle.forEach((l) => console.log(chalk[color](l)));
-	console.log(chalk[color](bottom));
-};
-
 /** Pemetaan data trainee (horse). */
 export const traineeMap: Record<number, string> = Object.fromEntries(traineeOptions.map(({ value, name }) => [value, name]));
 
@@ -72,7 +53,8 @@ export const formatSupportCard = (data?: SupportData) => {
 			break;
 	}
 
-	return `${c.name} [${formattedType}] (${c.rarity}${data.limit_break_count > 0 ? ` ${chalk.yellow('★'.repeat(data.limit_break_count))}` : ''})`;
+	const limitBreak = data.limit_break_count ?? 0;
+	return `${c.name} [${formattedType}] (${c.rarity}${limitBreak > 0 ? ` ${chalk.yellow('★'.repeat(limitBreak))}` : ''})`;
 };
 
 /**
@@ -109,7 +91,7 @@ export const formatSpark = (sparks: number[]) => {
 			Array.from({ length: value.toString().length === 8 ? 3 : 9 }, (_, i) => ({
 				name: color[type](`${i + 1}${chalk.yellow('★')} ${name}`),
 				value: value + i,
-			}))
+			})),
 		);
 
 	const opts: Option<number>[] = [...makeSparks(blueSparkOptions, 'blue'), ...makeSparks(pinkSparkOptions, 'pink'), ...makeSparks(greenSparkOptions, 'green'), ...makeSparks(whiteSparkOptions, 'white')];
@@ -118,16 +100,169 @@ export const formatSpark = (sparks: number[]) => {
 };
 
 /**
- * Mengambil nama dasar dari string dengan menghapus bagian dalam tanda kurung.
+ * Konversi nilai `parent_rank` dari API menjadi label rank yang dapat dibaca.
  *
- * Fungsi ini membersihkan string dengan menghapus teks apa pun di dalam tanda
- * kurung beserta spasi di sekitarnya, lalu memangkas spasi berlebih di awal
- * dan akhir.
+ * Menggunakan tabel ambang batas rank yang didefinisikan secara statis dan
+ * diurutkan dari nilai tertinggi ke terendah agar pencarian cukup dengan
+ * iterasi `find` pertama yang cocok.
  *
- * @param name - Nama asli yang mungkin mengandung teks dalam tanda kurung.
- * @returns Nama yang sudah dibersihkan tanpa bagian dalam tanda kurung.
+ * @param score - Nilai `parent_rank` dari data inheritance.
+ * @returns Label rank dalam format string (contoh: `"SS+"`, `"UG³"`, `"LF²⁴"`).
  */
-export const getBaseName = (name: string) => name.replace(/\s*\(.*?\)\s*/g, '').trim();
+export const getRankLabel = (score: number): string => {
+	const THRESHOLDS: [number, string][] = [
+		[104_800, 'LF²⁴'],
+		[104_300, 'LF²³'],
+		[103_800, 'LF²²'],
+		[103_200, 'LF²¹'],
+		[102_700, 'LF²⁰'],
+		[102_200, 'LF¹⁹'],
+		[101_700, 'LF¹⁸'],
+		[101_100, 'LF¹⁷'],
+		[100_600, 'LF¹⁶'],
+		[100_100, 'LF¹⁵'],
+		[99_600, 'LF¹⁴'],
+		[99_000, 'LF¹³'],
+		[98_500, 'LF¹²'],
+		[98_000, 'LF¹¹'],
+		[97_500, 'LF¹⁰'],
+		[96_900, 'LF⁹'],
+		[96_300, 'LF⁸'],
+		[95_600, 'LF⁷'],
+		[94_600, 'LF⁶'],
+		[94_000, 'LF⁵'],
+		[93_400, 'LF⁴'],
+		[92_800, 'LF³'],
+		[92_200, 'LF²'],
+		[91_600, 'LF¹'],
+		[91_000, 'LF'],
+		[90_400, 'LG²⁴'],
+		[89_800, 'LG²³'],
+		[89_200, 'LG²²'],
+		[88_600, 'LG²¹'],
+		[88_000, 'LG²⁰'],
+		[87_400, 'LG¹⁹'],
+		[86_800, 'LG¹⁸'],
+		[86_200, 'LG¹⁷'],
+		[85_600, 'LG¹⁶'],
+		[85_000, 'LG¹⁵'],
+		[84_400, 'LG¹⁴'],
+		[83_800, 'LG¹³'],
+		[83_200, 'LG¹²'],
+		[82_600, 'LG¹¹'],
+		[82_000, 'LG¹⁰'],
+		[81_400, 'LG⁹'],
+		[80_800, 'LG⁸'],
+		[80_200, 'LG⁷'],
+		[79_600, 'LG⁶'],
+		[79_000, 'LG⁵'],
+		[78_400, 'LG⁴'],
+		[77_800, 'LG³'],
+		[77_200, 'LG²'],
+		[76_600, 'LG¹'],
+		[75_300, 'LG'],
+		[74_400, 'US⁹'],
+		[73_000, 'US⁸'],
+		[71_600, 'US⁷'],
+		[70_300, 'US⁶'],
+		[69_000, 'US⁵'],
+		[67_700, 'US⁴'],
+		[66_400, 'US³'],
+		[65_100, 'US²'],
+		[64_200, 'US¹'],
+		[63_400, 'US'],
+		[62_500, 'UA⁹'],
+		[61_700, 'UA⁸'],
+		[60_800, 'UA⁷'],
+		[60_000, 'UA⁶'],
+		[59_200, 'UA⁵'],
+		[58_400, 'UA⁴'],
+		[57_500, 'UA³'],
+		[56_700, 'UA²'],
+		[55_900, 'UA¹'],
+		[55_200, 'UA'],
+		[54_400, 'UB⁹'],
+		[53_600, 'UB⁸'],
+		[52_800, 'UB⁷'],
+		[52_000, 'UB⁶'],
+		[51_300, 'UB⁵'],
+		[50_500, 'UB⁴'],
+		[49_800, 'UB³'],
+		[49_000, 'UB²'],
+		[48_300, 'UB¹'],
+		[47_600, 'UB'],
+		[46_900, 'UC⁹'],
+		[46_200, 'UC⁸'],
+		[45_400, 'UC⁷'],
+		[44_700, 'UC⁶'],
+		[44_000, 'UC⁵'],
+		[43_400, 'UC⁴'],
+		[42_700, 'UC³'],
+		[42_000, 'UC²'],
+		[41_300, 'UC¹'],
+		[40_700, 'UC'],
+		[40_000, 'UD⁹'],
+		[39_400, 'UD⁸'],
+		[38_700, 'UD⁷'],
+		[38_100, 'UD⁶'],
+		[37_500, 'UD⁵'],
+		[36_800, 'UD⁴'],
+		[36_200, 'UD³'],
+		[35_600, 'UD²'],
+		[35_000, 'UD¹'],
+		[34_400, 'UD'],
+		[33_800, 'UE⁹'],
+		[33_200, 'UE⁸'],
+		[32_700, 'UE⁷'],
+		[32_100, 'UE⁶'],
+		[31_500, 'UE⁵'],
+		[31_000, 'UE⁴'],
+		[30_400, 'UE³'],
+		[29_900, 'UE²'],
+		[29_400, 'UE¹'],
+		[28_800, 'UE'],
+		[28_300, 'UF⁹'],
+		[27_800, 'UF⁸'],
+		[27_300, 'UF⁷'],
+		[26_800, 'UF⁶'],
+		[26_300, 'UF⁵'],
+		[25_800, 'UF⁴'],
+		[25_300, 'UF³'],
+		[24_800, 'UF²'],
+		[24_300, 'UF¹'],
+		[23_900, 'UF'],
+		[23_400, 'UG⁹'],
+		[23_000, 'UG⁸'],
+		[22_500, 'UG⁷'],
+		[22_100, 'UG⁶'],
+		[21_600, 'UG⁵'],
+		[21_200, 'UG⁴'],
+		[20_800, 'UG³'],
+		[20_400, 'UG²'],
+		[20_000, 'UG¹'],
+		[19_600, 'UG'],
+		[19_200, 'SS+'],
+		[17_500, 'SS'],
+		[15_900, 'S+'],
+		[14_500, 'S'],
+		[12_100, 'A+'],
+		[10_000, 'A'],
+		[8_200, 'B+'],
+		[6_500, 'B'],
+		[4_900, 'C+'],
+		[3_500, 'C'],
+		[2_900, 'D+'],
+		[2_300, 'D'],
+		[1_800, 'E+'],
+		[1_300, 'E'],
+		[900, 'F+'],
+		[600, 'F'],
+		[300, 'G+'],
+		[0, 'G'],
+	];
+
+	return THRESHOLDS.find(([min]) => score >= min)?.[1] ?? '?';
+};
 
 /**
  * Export data hasil pencarian ke file CSV atau JSON.
@@ -156,7 +291,7 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 			const rows = data
 				.map(
 					(d) =>
-						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${stripAnsi(formatSupportCard(d.support_card))}","${stripAnsi(formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]))}"`
+						`"${d.account_id}","${d.trainer_name}","${traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-'}","${traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-'}","${stripAnsi(formatSupportCard(d.support_card))}","${stripAnsi(formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]))}"`,
 				)
 				.join('\n');
 
@@ -165,7 +300,7 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 
 		return filename;
 	} catch (error) {
-		console.error(`❌ Gagal mengekspor data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+		console.error(`❌ Gagal mengekspor data: ${error instanceof Error ? error.message : 'Unknown error'}.`);
 
 		return null;
 	}

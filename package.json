@@ -1,6 +1,6 @@
 {
 	"name": "uma-cli",
-	"version": "1.4.0",
+	"version": "2.0.0",
 	"description": "CLI untuk mencari data inheritance Umamusume: Pretty Derby",
 	"main": "./dist/index.js",
 	"bin": {
@@ -45,6 +45,7 @@
 	"dependencies": {
 		"chalk": "^6.0.0",
 		"commander": "^15.0.0",
+		"dotenv": "^17.4.2",
 		"inquirer": "^14.0.2",
 		"ora": "^9.4.1",
 		"strip-ansi": "^7.2.0",
