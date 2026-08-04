@@ -16,11 +16,7 @@ export interface ApiResponse {
 	total_pages: number;
 }
 
-/**
- * Skema error dari API uma.moe (#/components/schemas/Error).
- *
- * `error` dan `status` selalu ada; `details` bersifat opsional.
- */
+/** Struktur data error handling API. */
 export interface ApiError {
 	/** Pesan error singkat. */
 	error: string;

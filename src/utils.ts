@@ -109,7 +109,7 @@ export const formatSpark = (sparks: number[]) => {
  * @param score - Nilai `parent_rank` dari data inheritance.
  * @returns Label rank dalam format string (contoh: `"SS+"`, `"UG³"`, `"LF²⁴"`).
  */
-export const getRankLabel = (score: number): string => {
+export const getRankLabel = (score: number) => {
 	const THRESHOLDS: [number, string][] = [
 		[104_800, 'LF²⁴'],
 		[104_300, 'LF²³'],
@@ -274,7 +274,7 @@ export const getRankLabel = (score: number): string => {
  * @param format - Format file: 'csv' atau 'json'.
  * @returns Nama file yang dibuat jika sukses, atau `null` jika gagal/tidak dibuat.
  */
-export const exportData = (data: SearchResult[], format: ExportType): string | null => {
+export const exportData = (data: SearchResult[], format: ExportType) => {
 	try {
 		const dir = path.join('exports', format);
 

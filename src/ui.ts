@@ -23,7 +23,7 @@ let showUpcoming = false;
  * @returns Tidak mengembalikan nilai, hanya mencetak tabel ke console.
  */
 export const printTable = (data: SearchResult[]) => {
-	const maxW = [4, 23, 27, 27, 27, 32, 100, 28];
+	const maxW = [4, 25, 27, 27, 27, 32, 100, 32];
 	const headers = ['#', 'Account', 'Parent', 'Grandsire', 'Granddam', 'Support Card', 'Sparks', 'Info'].map((h) => chalk.cyan.bold(h));
 	const totalDefault = maxW.reduce((a, b) => a + b, 0) + headers.length * 3 + 1;
 	const termWidth = process.stdout.columns ?? totalDefault;
@@ -94,7 +94,7 @@ export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 're
  * @param withToggle  			 - Tampilkan opsi toggle upcoming (default true).
  * @returns Opsi yang dipilih user.
  */
-export const chooseOption = async <T>(opts: Option<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<Option<T>> => {
+export const chooseOption = async <T>(opts: Option<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true) => {
 	while (true) {
 		if (clearScreen) process.stdout.write('\x1bc');
 

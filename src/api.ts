@@ -15,7 +15,7 @@ import type { ApiError, ApiResponse, SearchSortingQuery, SearchTypeQuery } from 
  * @returns Response API berisi array item dan metadata paginasi.
  * @throws Error dengan pesan dari `ApiError.error` (dan `ApiError.details` jika ada) saat HTTP error.
  */
-export const fetchSearch = async (page: number = 0, limit: number = 20, searchType: SearchTypeQuery = 'all', sortBy: SearchSortingQuery = 'affinity_score', playerCharaId?: number | string): Promise<ApiResponse> => {
+export const fetchSearch = async (page: number = 0, limit: number = 20, searchType: SearchTypeQuery = 'all', sortBy: SearchSortingQuery = 'affinity_score', playerCharaId?: number | string) => {
 	const apiKey = process.env.UMA_MOE_API_KEY;
 
 	if (!apiKey) {

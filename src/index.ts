@@ -153,7 +153,7 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 				reachedEnd = true;
 			}
 
-			const renderContent = (): void => {
+			const renderContent = () => {
 				console.log(`🔍 Hasil pencarian untuk ${targetInfo}:\n`);
 				printBoxedMessage(statusMessage, statusColor);
 
