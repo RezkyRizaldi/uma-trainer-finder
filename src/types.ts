@@ -24,7 +24,7 @@ export interface ApiError {
 	/** HTTP status code. */
 	status: number;
 
-	/** Detail tambahan (opsional). */
+	/** Detail tambahan. */
 	details?: string;
 }
 
@@ -39,11 +39,14 @@ export interface SearchResult {
 	/** Jumlah follower akun trainer. */
 	follower_num: number | null;
 
+	/** Jumlah total kali inheritance trainer ini ditampilkan ke orang lain. */
 	borrow_view_count: number; // int64
 
+	/** Jumlah total kali inheritance trainer ini disalin oleh orang lain. */
 	borrow_copy_count: number; // int64
 
-	last_updated: string | null; // date-time
+	/** Waktu terakhir data diperbarui. */
+	last_updated: string | null; // ISO 8601 date-time
 
 	/** Informasi grandsire dan granddam (opsional). */
 	inheritance?: InheritanceData;
@@ -112,7 +115,7 @@ export interface InheritanceData {
 	affinity_score: number | null;
 }
 
-/** Struktur support data dari API (dalam hasil search). */
+/** Struktur support data dari API. */
 export interface SupportData {
 	/** ID akun trainer. */
 	account_id: string;
@@ -127,12 +130,7 @@ export interface SupportData {
 	experience: number;
 }
 
-/**
- * Representasi generic option untuk menu pilihan interaktif.
- *
- * `status` hanya diisi untuk data trainee dari `constants.ts`.
- * Item navigasi (aksi menu) tidak mengisi `status` sehingga nilainya `undefined`.
- */
+/** Representasi generic option untuk menu pilihan interaktif. */
 export interface Option<T> {
 	/** Nama yang ditampilkan ke user. */
 	name: string;
@@ -176,6 +174,9 @@ export type ExportType = 'csv' | 'json';
 
 /** Struktur opsi CLI yang diterima dari user. */
 export interface CLIOptions {
+	/** Metode pengurutan hasil pencarian. */
 	sort?: SearchSortingQuery;
+
+	/** Format ekspor data hasil pencarian. */
 	export?: ExportType;
 }
