@@ -66,10 +66,11 @@ export const printTable = (data: SearchResult[]) => {
  */
 export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 'red' | 'yellow' = 'cyan') => {
 	const lines = message.split('\n');
-	const maxLen = Math.max(...lines.map((l) => stripAnsi(l).length));
+	const stripped = lines.map(stripAnsi);
+	const maxLen = Math.max(...stripped.map((s) => s.length));
 	const top = '┌' + '─'.repeat(maxLen + 4) + '┐';
 	const bottom = '└' + '─'.repeat(maxLen + 4) + '┘';
-	const middle = lines.map((l) => '│ ' + l + ' '.repeat(maxLen - stripAnsi(l).length) + ' │');
+	const middle = lines.map((l, i) => '│ ' + l + ' '.repeat(maxLen - (stripped[i]?.length ?? 0)) + ' │');
 
 	console.log(chalk[color](top));
 	middle.forEach((l) => console.log(chalk[color](l)));

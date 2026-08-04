@@ -96,9 +96,10 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 	const options = program.opts<CLIOptions>();
 	const sortBy: SearchSortingQuery = options.sort ?? 'affinity_score';
 	let exportFeedback: string | null = null;
+	const traineeChoices = [...traineeOptions, { name: '🛑 Berhenti', value: 'stop' as unknown as number }];
 
 	while (true) {
-		const target = await chooseOption([...traineeOptions, { name: '🛑 Berhenti', value: 'stop' as unknown as number }], 'Pilih Target Trainee', true, () => {
+		const target = await chooseOption(traineeChoices, 'Pilih Target Trainee', true, () => {
 			if (!exportFeedback) return;
 			printBoxedMessage(exportFeedback, 'green');
 			exportFeedback = null;
@@ -107,6 +108,7 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 		if ((target.value as unknown as string) === 'stop') process.exit(0);
 
 		const data: SearchResult[] = [];
+		const seenIds = new Set<string>();
 		const targetInfo = chalk.yellowBright(target.name);
 		let page = 1;
 		let consecutiveFails = 0;
@@ -127,7 +129,7 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 			}
 
 			const newItems = response?.items ?? [];
-			const dedupedItems = newItems.filter((nd) => !data.some((d) => d.account_id === nd.account_id));
+			const dedupedItems = newItems.filter((nd) => !seenIds.has(nd.account_id));
 			let statusMessage: string;
 			let statusColor: 'cyan' | 'green' | 'red' | 'yellow';
 
@@ -137,6 +139,8 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 				consecutiveFails++;
 				pageHistory.push(0);
 			} else if (dedupedItems.length > 0) {
+				for (const item of dedupedItems) seenIds.add(item.account_id);
+
 				data.push(...dedupedItems);
 				statusMessage = `✅ ${dedupedItems.length} data baru ditemukan (halaman ${page}).`;
 				statusColor = 'green';
@@ -202,7 +206,11 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 			if (action === 'prev') {
 				const removedCount = pageHistory.pop() ?? 0;
 
-				if (removedCount > 0) data.splice(-removedCount);
+				if (removedCount > 0) {
+					const removed = data.splice(-removedCount);
+
+					for (const item of removed) seenIds.delete(item.account_id);
+				}
 
 				page -= 1;
 				reachedEnd = false;
