@@ -19,10 +19,12 @@ let showUpcoming = false;
  * - Menggambar tabel dengan karakter box-drawing.
  * - Menampilkan tabel akhir ke console.
  *
- * @param data - Array hasil pencarian untuk ditampilkan.
+ * @param data       - Array hasil pencarian untuk ditampilkan.
+ * @param startIndex - Offset nomor baris (default 0); page 2 kirim 20 agar nomor mulai dari 21.
+ * @param footer     - Teks indikator paginasi (opsional), ditampilkan di bawah tabel.
  * @returns Tidak mengembalikan nilai, hanya mencetak tabel ke console.
  */
-export const printTable = (data: SearchResult[]) => {
+export const printTable = (data: SearchResult[], startIndex = 0, footer?: string) => {
 	const maxW = [4, 25, 27, 27, 27, 32, 100, 32];
 	const headers = ['#', 'Account', 'Parent', 'Grandsire', 'Granddam', 'Support Card', 'Sparks', 'Info'].map((h) => chalk.cyan.bold(h));
 	const totalDefault = maxW.reduce((a, b) => a + b, 0) + headers.length * 3 + 1;
@@ -33,7 +35,7 @@ export const printTable = (data: SearchResult[]) => {
 		const rankLabel = rank != null ? getRankLabel(rank) : '-';
 
 		return [
-			`${i + 1}.`,
+			`${startIndex + i + 1}.`,
 			`${d.trainer_name}\n${d.account_id}`,
 			traineeMap[d.inheritance?.main_parent_id ?? -1] ?? d.inheritance?.main_parent_id?.toString() ?? '-',
 			traineeMap[d.inheritance?.parent_left_id ?? -1] ?? d.inheritance?.parent_left_id?.toString() ?? '-',
@@ -54,7 +56,7 @@ export const printTable = (data: SearchResult[]) => {
 		})),
 	});
 
-	console.log(output);
+	console.log(`${output}${footer ? `${chalk.dim(footer)}\n` : undefined}`);
 };
 
 /**

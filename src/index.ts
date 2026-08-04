@@ -8,12 +8,18 @@ import ora from 'ora';
 
 import { fetchSearch } from './api';
 import { traineeOptions } from './constants';
-import type { ApiResponse, CLIOptions, ExportType, Option, SearchResult, SearchSortingQuery } from './types';
+import type { CLIOptions, ExportType, Option, SearchResult, SearchSortingQuery } from './types';
 import { chooseOption, printBoxedMessage, printTable } from './ui';
 import { exportData } from './utils';
 import pkg from '../package.json';
 
-const PAGE_LIMIT = 20;
+/** Jumlah item per pemanggilan API. */
+const FETCH_LIMIT = 100;
+
+/** Jumlah item yang ditampilkan per halaman. */
+const PAGE_SIZE = 20;
+
+/** Jumlah kegagalan fetch berturut-turut sebelum pencarian dihentikan otomatis. */
 const MAX_CONSECUTIVE_FAILS = 5;
 
 /**
@@ -26,7 +32,7 @@ const MAX_CONSECUTIVE_FAILS = 5;
  * @param presetFormat - Format ekspor dari flag CLI, opsional.
  * @returns Nama file yang dibuat jika berhasil, atau `null` jika dibatalkan.
  */
-const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportType): Promise<string | null> => {
+const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportType) => {
 	if (data.length === 0) return null;
 
 	if (presetFormat) return exportData(data, presetFormat);
@@ -107,89 +113,93 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 
 		if ((target.value as unknown as string) === 'stop') process.exit(0);
 
-		const data: SearchResult[] = [];
+		const allData: SearchResult[] = [];
 		const seenIds = new Set<string>();
 		const targetInfo = chalk.yellowBright(target.name);
-		let page = 1;
+		let displayPage = 1;
+		let apiBatchCount = 0;
+		let reachedApiEnd = false;
 		let consecutiveFails = 0;
-		let reachedEnd = false;
-		const pageHistory: number[] = [];
+		let fetchStatus: { message: string; color: 'cyan' | 'green' | 'red' | 'yellow' } | null = null;
 
 		while (true) {
-			const spinner = ora(`Mengambil data ${targetInfo} — halaman ${page}...`).start();
-			let response: ApiResponse | null = null;
-			let fetchError: string | null = null;
+			const startIdx = (displayPage - 1) * PAGE_SIZE;
 
-			try {
-				response = await fetchSearch(page - 1, PAGE_LIMIT, 'all', sortBy, target.value as number);
-			} catch (err) {
-				fetchError = err instanceof Error ? err.message : String(err);
-			} finally {
-				spinner.stop();
+			if (startIdx >= allData.length && !reachedApiEnd) {
+				const spinner = ora(`Mengambil data untuk ${targetInfo}...`).start();
+
+				try {
+					const response = await fetchSearch(apiBatchCount, FETCH_LIMIT, 'all', sortBy, target.value as number);
+
+					const newItems = (response.items ?? []).filter((nd) => !seenIds.has(nd.account_id));
+
+					for (const item of newItems) seenIds.add(item.account_id);
+
+					allData.push(...newItems);
+					apiBatchCount++;
+
+					if (response.page >= response.total_pages - 1) reachedApiEnd = true;
+
+					if (newItems.length > 0) {
+						fetchStatus = { message: `✅ ${newItems.length} data baru ditemukan.`, color: 'green' };
+						consecutiveFails = 0;
+					} else {
+						fetchStatus = { message: `⚠️ Tidak ada data baru dari API.`, color: 'yellow' };
+						consecutiveFails++;
+					}
+				} catch (err) {
+					fetchStatus = {
+						message: `❌ Gagal mengambil data: ${err instanceof Error ? err.message : String(err)}.`,
+						color: 'red',
+					};
+					consecutiveFails++;
+				} finally {
+					spinner.stop();
+				}
+
+				if (consecutiveFails >= MAX_CONSECUTIVE_FAILS) {
+					process.stdout.write('\x1bc');
+					console.log(`🔍 Hasil pencarian untuk ${targetInfo}:\n`);
+
+					if (fetchStatus) printBoxedMessage(fetchStatus.message, fetchStatus.color);
+
+					if (allData.length === 0) {
+						printBoxedMessage(`❌ Tidak ada data ditemukan untuk ${targetInfo}.`, 'red');
+						process.exit(0);
+					}
+
+					printBoxedMessage(`⚠️ Pencarian dihentikan otomatis setelah ${MAX_CONSECUTIVE_FAILS} kegagalan berturut-turut.`, 'yellow');
+
+					await handleExportPrompt(allData, options.export);
+
+					process.exit(0);
+				}
 			}
 
-			const newItems = response?.items ?? [];
-			const dedupedItems = newItems.filter((nd) => !seenIds.has(nd.account_id));
-			let statusMessage: string;
-			let statusColor: 'cyan' | 'green' | 'red' | 'yellow';
-
-			if (fetchError) {
-				statusMessage = `❌ Gagal mengambil data: ${fetchError}.`;
-				statusColor = 'red';
-				consecutiveFails++;
-				pageHistory.push(0);
-			} else if (dedupedItems.length > 0) {
-				for (const item of dedupedItems) seenIds.add(item.account_id);
-
-				data.push(...dedupedItems);
-				statusMessage = `✅ ${dedupedItems.length} data baru ditemukan (halaman ${page}).`;
-				statusColor = 'green';
-				consecutiveFails = 0;
-				pageHistory.push(dedupedItems.length);
-			} else {
-				statusMessage = `⚠️ Tidak ada data baru di halaman ${page}.`;
-				statusColor = 'yellow';
-				consecutiveFails++;
-				pageHistory.push(0);
-			}
-
-			if (response && response.page >= response.total_pages - 1) {
-				reachedEnd = true;
-			}
+			const currentPageData = allData.slice(startIdx, startIdx + PAGE_SIZE);
+			const totalDisplayPages = Math.max(1, Math.ceil(allData.length / PAGE_SIZE));
+			const endIdx = Math.min(startIdx + PAGE_SIZE, allData.length);
+			const hasMorePages = displayPage < totalDisplayPages || !reachedApiEnd;
+			const apiSuffix = reachedApiEnd ? '' : '+';
+			const footer = allData.length > 0 ? `Halaman ${displayPage} dari ${totalDisplayPages}${apiSuffix} · Menampilkan data ${startIdx + 1}–${endIdx} dari ${allData.length}${apiSuffix}` : undefined;
 
 			const renderContent = () => {
-				console.log(`🔍 Hasil pencarian untuk ${targetInfo}:\n`);
-				printBoxedMessage(statusMessage, statusColor);
+				console.log(`🔍 Hasil pencarian untuk ${targetInfo}:`);
 
-				if (data.length > 0) {
-					console.log('');
-					printTable(data);
+				if (fetchStatus) printBoxedMessage(fetchStatus.message, fetchStatus.color);
+
+				if (currentPageData.length > 0) {
+					printTable(currentPageData, startIdx, footer);
 				}
 			};
 
-			if (consecutiveFails >= MAX_CONSECUTIVE_FAILS) {
-				process.stdout.write('\x1bc');
-				renderContent();
+			const actionChoices: Option<string>[] = hasMorePages ? [{ name: '➡️ Lanjut ke Halaman Berikutnya', value: 'next' }] : [{ name: '💭 Halaman Terakhir Sudah Tercapai', value: 'end' }];
 
-				if (data.length === 0) {
-					printBoxedMessage(`❌ Tidak ada data ditemukan untuk ${targetInfo}.`, 'red');
-					process.exit(0);
-				}
-
-				printBoxedMessage(`⚠️ Pencarian dihentikan otomatis setelah ${MAX_CONSECUTIVE_FAILS} kegagalan berturut-turut.`, 'yellow');
-
-				await handleExportPrompt(data, options.export);
-
-				process.exit(0);
-			}
-
-			const actionChoices: Option<string>[] = reachedEnd ? [{ name: '💭 Halaman Terakhir Sudah Tercapai', value: 'end' }] : [{ name: '➡️ Lanjut ke Halaman Berikutnya', value: 'next' }];
-
-			if (page > 1) {
+			if (displayPage > 1) {
 				actionChoices.push({ name: '⬅️ Kembali ke Halaman Sebelumnya', value: 'prev' });
 			}
 
-			if (data.length > 0) {
+			if (allData.length > 0) {
 				actionChoices.push({ name: '💾 Ekspor Hasil', value: 'export' });
 			}
 
@@ -197,30 +207,26 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 
 			const { value: action } = await chooseOption(actionChoices, 'Pilih Aksi', true, renderContent, false);
 
+			if (action === 'next') {
+				displayPage++;
+				fetchStatus = null;
+				continue;
+			}
+
+			if (action === 'prev') {
+				displayPage--;
+				fetchStatus = null;
+				continue;
+			}
+
 			if (action === 'stop') {
-				await handleExportPrompt(data, options.export);
+				await handleExportPrompt(allData, options.export);
 
 				process.exit(0);
 			}
 
-			if (action === 'prev') {
-				const removedCount = pageHistory.pop() ?? 0;
-
-				if (removedCount > 0) {
-					const removed = data.splice(-removedCount);
-
-					for (const item of removed) seenIds.delete(item.account_id);
-				}
-
-				page -= 1;
-				reachedEnd = false;
-				consecutiveFails = 0;
-
-				continue;
-			}
-
 			if (action === 'export' || action === 'reset' || action === 'end') {
-				const exported = await handleExportPrompt(data, options.export);
+				const exported = await handleExportPrompt(allData, options.export);
 
 				if (exported) exportFeedback = `✅ Data berhasil diekspor ke ${exported}.`;
 
@@ -228,8 +234,6 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 
 				break;
 			}
-
-			page += 1;
 		}
 	}
 })();
