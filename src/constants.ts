@@ -270,7 +270,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Yaeno Muteki (Black General, Zen)', value: 107202, status: 'upcoming' },
 	{ name: 'Yamanin Zephyr (Fluttertail Spirit)', value: 107801, status: 'upcoming' },
 	{ name: 'Yamanin Zephyr (Sugary Wind)', value: 107802, status: 'upcoming' },
-	{ name: 'Yukino Bijin (Cute Sweet Flower of Mutsu)', value: 102901, status: 'upcoming' },
+	{ name: "Yukino Bijin (Darl'n Snowflake)", value: 102901, status: 'released' },
 	{ name: 'Yukino Bijin (Snowy Girl of Tea and Cake)', value: 102902, status: 'upcoming' },
 	{ name: 'Zenno Rob Roy (Heroic Author)', value: 104701, status: 'upcoming' },
 	{ name: 'Zenno Rob Roy (Inlaid Stories)', value: 104702, status: 'upcoming' },
