@@ -223,7 +223,7 @@ export const formatSupportCard = (data?: SupportData): string => {
 	const colorFn = SUPPORT_TYPE_COLOR[c.type] ?? chalk.greenBright;
 	const limitBreak = data.limit_break_count ?? 0;
 
-	return `${c.name} [${colorFn(c.type)}] (${c.rarity}${limitBreak > 0 ? ` ${chalk.yellow('★'.repeat(limitBreak))}` : ''})`;
+	return `${c.name} [${colorFn(c.type)}] (${c.rarity} ${chalk.yellow('★'.repeat(limitBreak + 1))})`;
 };
 
 /**
@@ -265,7 +265,6 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 
 		fs.mkdirSync(dir, { recursive: true });
 
-		// toISOString() → "2026-08-05T02:41:00.000Z", ambil 19 karakter pertama lalu sanitasi
 		const timestamp = new Date().toISOString().slice(0, 19).replace('T', '_').replace(/:/g, '-');
 		const filename = path.join(dir, `uma-trainer-results-${timestamp}.${format}`);
 
@@ -277,7 +276,6 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 				.map((d) => {
 					const inh = d.inheritance;
 					const rank = inh?.parent_rank;
-					const rankLabel = rank != null ? getRankLabel(rank) : '-';
 					const allSparks = [...(inh?.blue_sparks ?? []), ...(inh?.pink_sparks ?? []), ...(inh?.green_sparks ?? []), ...(inh?.white_sparks ?? [])];
 
 					return [
@@ -287,7 +285,7 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 						`"${traineeMap[inh?.parent_right_id ?? -1] ?? inh?.parent_right_id ?? '-'}"`,
 						`"${stripAnsi(formatSupportCard(d.support_card))}"`,
 						`"${stripAnsi(formatSpark(allSparks))}"`,
-						`"Affinity: ${inh?.affinity_score ?? '-'}\nGI Wins: ${inh?.win_count ?? '-'}\nWhite Skills: ${inh?.white_count ?? '-'}\nRank: ${rankLabel} (${rank ?? '-'})"`,
+						`"Affinity: ${inh?.affinity_score ?? '-'}\nGI Wins: ${inh?.win_count ?? '-'}\nWhite Skills: ${inh?.white_count ?? '-'}\nRank: ${rank != null ? `${getRankLabel(rank)} (${rank} Points)` : '-'}"`,
 					].join(',');
 				})
 				.join('\n');

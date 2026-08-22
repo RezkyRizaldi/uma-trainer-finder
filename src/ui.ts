@@ -32,7 +32,6 @@ export const printTable = (data: SearchResult[], startIndex = 0, footer?: string
 
 	const rows = data.map((d, i) => {
 		const rank = d.inheritance?.parent_rank;
-		const rankLabel = rank != null ? getRankLabel(rank) : '-';
 
 		return [
 			`${startIndex + i + 1}.`,
@@ -42,7 +41,7 @@ export const printTable = (data: SearchResult[], startIndex = 0, footer?: string
 			traineeMap[d.inheritance?.parent_right_id ?? -1] ?? d.inheritance?.parent_right_id?.toString() ?? '-',
 			formatSupportCard(d.support_card),
 			formatSpark([...(d.inheritance?.blue_sparks ?? []), ...(d.inheritance?.pink_sparks ?? []), ...(d.inheritance?.green_sparks ?? []), ...(d.inheritance?.white_sparks ?? [])]),
-			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nGI Wins: ${d.inheritance?.win_count ?? '-'}\nWhite Skills: ${d.inheritance?.white_count ?? '-'}\nRank: ${rankLabel} (${rank ?? '-'})`,
+			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nGI Wins: ${d.inheritance?.win_count ?? '-'}\nWhite Skills: ${d.inheritance?.white_count ?? '-'}\nRank: ${rank != null ? `${getRankLabel(rank)} (${rank} Points)` : '-'}`,
 		];
 	});
 
