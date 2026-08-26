@@ -17,7 +17,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Air Shakur (unsigned)', value: 103601, status: 'released' },
 	{ name: 'Almond Eye (The Changer)', value: 112901, status: 'upcoming' },
 	{ name: 'Aston Machan (Everlasting Sweet Treat)', value: 108702, status: 'upcoming' },
-	{ name: 'Aston Machan (Flare)', value: 108701, status: 'upcoming' },
+	{ name: 'Aston Machan (Flare)', value: 108701, status: 'released' },
 	{ name: 'Bamboo Memory (Iron Ambition)', value: 105301, status: 'released' },
 	{ name: 'Bamboo Memory (Ultra☆Marine)', value: 105302, status: 'upcoming' },
 	{ name: 'Believe (Essence)', value: 109501, status: 'upcoming' },
