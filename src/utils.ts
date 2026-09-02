@@ -290,7 +290,7 @@ export const exportData = (data: SearchResult[], format: ExportType): string | n
 				})
 				.join('\n');
 
-			fs.writeFileSync(filename, header + rows);
+			fs.writeFileSync(filename, `${header}${rows}`);
 		}
 
 		return filename;

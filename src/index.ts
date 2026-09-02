@@ -74,6 +74,7 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 	};
 
 	const program = new Command();
+
 	program
 		.name('uma-cli')
 		.description('CLI untuk mencari data inheritance Umamusume: Pretty Derby')
@@ -95,9 +96,8 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 				process.exit(1);
 			}
 			return value;
-		});
-
-	program.parse();
+		})
+		.parse();
 
 	const options = program.opts<CLIOptions>();
 	const sortBy: SearchSortingQuery = options.sort ?? 'affinity_score';
@@ -107,6 +107,7 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 	while (true) {
 		const target = await chooseOption(traineeChoices, 'Pilih Target Trainee', true, () => {
 			if (!exportFeedback) return;
+
 			printBoxedMessage(exportFeedback, 'green');
 			exportFeedback = null;
 		});
@@ -210,12 +211,14 @@ const handleExportPrompt = async (data: SearchResult[], presetFormat?: ExportTyp
 			if (action === 'next') {
 				displayPage++;
 				fetchStatus = null;
+
 				continue;
 			}
 
 			if (action === 'prev') {
 				displayPage--;
 				fetchStatus = null;
+
 				continue;
 			}
 

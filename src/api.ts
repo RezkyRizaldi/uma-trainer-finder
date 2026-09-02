@@ -42,6 +42,7 @@ export const fetchSearch = async (page: number = 0, limit: number = 20, searchTy
 	if (!res.ok) {
 		try {
 			const body = (await res.json()) as ApiError;
+
 			const message = body.details ? `${body.error} — ${body.details}` : body.error;
 
 			throw new Error(`[${body.status}] ${message}`);
