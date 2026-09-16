@@ -160,7 +160,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Mihono Bourbon (MB-19890425)', value: 102601, status: 'released' },
 	{ name: 'Mr. C.B. (Clear Bliss)', value: 105701, status: 'upcoming' },
 	{ name: 'Mr. C.B. (Dazzling Kabuki Flower)', value: 105702, status: 'upcoming' },
-	{ name: 'Nakayama Festa (Dramatic Turnabout)', value: 104901, status: 'upcoming' },
+	{ name: 'Nakayama Festa (Desperate Measures)', value: 104901, status: 'released' },
 	{ name: 'Nakayama Festa (Festive Play)', value: 104902, status: 'upcoming' },
 	{ name: 'Narita Brian (Hungry Wolf)', value: 101602, status: 'upcoming' },
 	{ name: 'Narita Brian (Maverick)', value: 101601, status: 'released' },
