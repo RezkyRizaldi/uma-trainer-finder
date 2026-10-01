@@ -1,13 +1,11 @@
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import stripAnsi from 'strip-ansi';
 import { getBorderCharacters, table } from 'table';
 
-import type { OptionWithSpecial, SearchResult } from './types';
-import { formatSpark, formatSupportCard, traineeMap } from './utils';
+import type { Option, SearchResult } from './types';
+import { formatSpark, formatSupportCard, getRankLabel, traineeMap } from './utils';
 
-/**
- * State untuk toggle tampilan karakter upcoming.
- */
 let showUpcoming = false;
 
 /**
@@ -21,36 +19,63 @@ let showUpcoming = false;
  * - Menggambar tabel dengan karakter box-drawing.
  * - Menampilkan tabel akhir ke console.
  *
- * @param data - Array hasil pencarian untuk ditampilkan.
+ * @param data       - Array hasil pencarian untuk ditampilkan.
+ * @param startIndex - Offset nomor baris (default 0); page 2 kirim 20 agar nomor mulai dari 21.
+ * @param footer     - Teks indikator paginasi (opsional), ditampilkan di bawah tabel.
  * @returns Tidak mengembalikan nilai, hanya mencetak tabel ke console.
  */
-export const printTable = (data: SearchResult[]) => {
-	const headers = ['#', 'Account ID', 'Account Name', 'Grandsire', 'Granddam', 'Support Card', 'Sparks'].map((h) => chalk.cyan.bold(h));
-	const maxW = [6, 12, 15, 25, 25, 35, 70];
+export const printTable = (data: SearchResult[], startIndex = 0, footer?: string) => {
+	const maxW = [4, 25, 27, 27, 27, 32, 100, 32];
+	const headers = ['#', 'Account', 'Parent', 'Grandsire', 'Granddam', 'Support Card', 'Sparks', 'Info'].map((h) => chalk.cyan.bold(h));
 	const totalDefault = maxW.reduce((a, b) => a + b, 0) + headers.length * 3 + 1;
 	const termWidth = process.stdout.columns ?? totalDefault;
 
-	const rows = data.map((d, i) => [
-		`${i + 1}.`,
-		d.account_id,
-		d.trainer_name,
-		traineeMap[d?.inheritance?.parent_left_id ?? -1] ?? d?.inheritance?.parent_left_id?.toString() ?? '-',
-		traineeMap[d?.inheritance?.parent_right_id ?? -1] ?? d?.inheritance?.parent_right_id?.toString() ?? '-',
-		formatSupportCard(d.support_card),
-		formatSpark([...(d?.inheritance?.blue_sparks ?? []), ...(d?.inheritance?.pink_sparks ?? []), ...(d?.inheritance?.green_sparks ?? []), ...(d?.inheritance?.white_sparks ?? [])]),
-	]);
+	const rows = data.map((d, i) => {
+		const rank = d.inheritance?.parent_rank;
+
+		return [
+			`${startIndex + i + 1}.`,
+			`${d.trainer_name}\n${d.account_id}`,
+			traineeMap[d.inheritance?.main_parent_id ?? -1] ?? d.inheritance?.main_parent_id?.toString() ?? '-',
+			traineeMap[d.inheritance?.parent_left_id ?? -1] ?? d.inheritance?.parent_left_id?.toString() ?? '-',
+			traineeMap[d.inheritance?.parent_right_id ?? -1] ?? d.inheritance?.parent_right_id?.toString() ?? '-',
+			formatSupportCard(d.support_card),
+			formatSpark([...(d.inheritance?.blue_sparks ?? []), ...(d.inheritance?.pink_sparks ?? []), ...(d.inheritance?.green_sparks ?? []), ...(d.inheritance?.white_sparks ?? [])]),
+			`Affinity: ${d.inheritance?.affinity_score ?? '-'}\nGI Wins: ${d.inheritance?.win_count ?? '-'}\nWhite Skills: ${d.inheritance?.white_count ?? '-'}\nRank: ${rank != null ? `${getRankLabel(rank)} (${rank} Points)` : '-'}`,
+		];
+	});
 
 	const output = table([headers, ...rows], {
 		border: getBorderCharacters('honeywell'),
 		columns: maxW.map((w) => ({
 			alignment: 'center',
 			verticalAlignment: 'middle',
-			width: Math.max(8, Math.floor(w * Math.min(1, termWidth / totalDefault))),
+			width: Math.max(6, Math.floor(w * Math.min(1, termWidth / totalDefault))),
 			wrapWord: true,
 		})),
 	});
 
-	console.log(output);
+	console.log(`${output}${footer ? `${chalk.dim(footer)}\n` : undefined}`);
+};
+
+/**
+ * Mencetak pesan dalam kotak persegi panjang.
+ *
+ * @param message - Pesan yang akan dicetak.
+ * @param color - Warna border (default: 'cyan').
+ * @returns Tidak mengembalikan nilai, hanya mencetak ke console.
+ */
+export const printBoxedMessage = (message: string, color: 'cyan' | 'green' | 'red' | 'yellow' = 'cyan') => {
+	const lines = message.split('\n');
+	const stripped = lines.map(stripAnsi);
+	const maxLen = Math.max(...stripped.map((s) => s.length));
+	const top = '┌' + '─'.repeat(maxLen + 4) + '┐';
+	const bottom = '└' + '─'.repeat(maxLen + 4) + '┘';
+	const middle = lines.map((l, i) => '│ ' + l + ' '.repeat(maxLen - (stripped[i]?.length ?? 0)) + ' │');
+
+	console.log(chalk[color](top));
+	middle.forEach((l) => console.log(chalk[color](l)));
+	console.log(chalk[color](bottom));
 };
 
 /**
@@ -71,19 +96,19 @@ export const printTable = (data: SearchResult[]) => {
  * @param withToggle  			 - Tampilkan opsi toggle upcoming (default true).
  * @returns Opsi yang dipilih user.
  */
-export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true): Promise<OptionWithSpecial<T>> => {
+export const chooseOption = async <T>(opts: Option<T>[], msg: string, clearScreen = true, persistentRenderer: (() => void) | null = null, withToggle = true) => {
 	while (true) {
 		if (clearScreen) process.stdout.write('\x1bc');
+
 		persistentRenderer?.();
 
-		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === 'option');
+		const baseOpts = showUpcoming ? opts : opts.filter((o) => o.status === 'released' || o.status === undefined);
 		const list = withToggle
 			? [
 					...baseOpts,
 					{
 						name: showUpcoming ? '🚫 Sembunyikan karakter yang akan datang' : '👁️ Tampilkan karakter yang akan datang',
-						value: '__toggleUpcoming',
-						status: 'option',
+						value: '__toggleUpcoming' as unknown as T,
 					},
 				]
 			: baseOpts;
@@ -97,7 +122,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 		const defaultValue = firstSelectableIndex >= 0 ? inquirerChoices[firstSelectableIndex]?.value : undefined;
 
 		try {
-			const { chosen } = (await inquirer.prompt<{ chosen: OptionWithSpecial<T> }>([
+			const { chosen } = (await inquirer.prompt<{ chosen: Option<T> }>([
 				{
 					type: 'select',
 					name: 'chosen',
@@ -107,7 +132,7 @@ export const chooseOption = async <T>(opts: OptionWithSpecial<T>[], msg: string,
 					pageSize: 20,
 					default: defaultValue,
 				},
-			])) as { chosen: OptionWithSpecial<T> };
+			])) as { chosen: Option<T> };
 
 			if (chosen.value === '__toggleUpcoming') {
 				showUpcoming = !showUpcoming;
