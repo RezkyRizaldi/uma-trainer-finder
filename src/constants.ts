@@ -217,7 +217,7 @@ export const traineeOptions: Option<number>[] = [
 	{ name: 'Seiun Sky (Reeling in the Big One)', value: 102001, status: 'released' },
 	{ name: 'Seiun Sky (Soirée des Chatons)', value: 102002, status: 'released' },
 	{ name: 'Shinko Windy (Chomp-Chomp ☆ Scamp)', value: 104302, status: 'upcoming' },
-	{ name: 'Shinko Windy (Wicked Punk)', value: 104301, status: 'upcoming' },
+	{ name: 'Shinko Windy (Wicked Punk)', value: 104301, status: 'released' },
 	{ name: 'Silence Suzuka (Emerald Among the Waves)', value: 100202, status: 'upcoming' },
 	{ name: 'Silence Suzuka (Innocent Silent)', value: 100201, status: 'released' },
 	{ name: 'Sirius Symboli (Féroce)', value: 107001, status: 'upcoming' },
